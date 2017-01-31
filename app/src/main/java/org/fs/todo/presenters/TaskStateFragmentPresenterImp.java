@@ -24,8 +24,10 @@ import org.fs.todo.commons.ToDoStorage;
 import org.fs.todo.commons.components.DaggerPresenterComponent;
 import org.fs.todo.commons.modules.PresenterModule;
 import org.fs.todo.entities.DisplayOptions;
+import org.fs.todo.entities.Option;
 import org.fs.todo.entities.Task;
 import org.fs.todo.entities.TaskState;
+import org.fs.todo.entities.events.DisplayEvent;
 import org.fs.todo.views.TaskStateFragmentView;
 import org.fs.util.Collections;
 import org.fs.util.ObservableList;
@@ -94,7 +96,48 @@ public class TaskStateFragmentPresenterImp extends AbstractPresenter<TaskStateFr
       }
       // register added
       register = BusManager.add((evt) -> {
-        // change
+        if(evt instanceof DisplayEvent) {
+          DisplayEvent event = (DisplayEvent) evt;
+          if(view.isAvailable()) {
+            if(event.option() == Option.ADD) {
+              dataSet.add(event.task());
+            } else if(event.option() == Option.CHANGE) {
+              // in state change there is some more option here if display only ACTIVE or INACTIVE
+              // we gone remove depending on state
+              int index = dataSet.indexOf((t) -> t.getId().equals(event.task().getId()));
+              if(displayOption == DisplayOptions.ALL) {
+                if (index != -1) {
+                  dataSet.set(index, event.task());
+                }
+              } else if (displayOption == DisplayOptions.ACTIVE) {
+                if (event.task().getState() == TaskState.INACTIVE) {
+                  if (index != -1) {
+                    dataSet.remove(index);
+                  }
+                } else if (event.task().getState() == TaskState.ACTIVE) {
+                  if (index == -1) {
+                    dataSet.add(event.task());
+                  }
+                }
+              } else if (displayOption == DisplayOptions.INACTIVE) {
+                if (event.task().getState() == TaskState.ACTIVE) {
+                  if (index != -1) {
+                    dataSet.remove(index);
+                  }
+                } else if (event.task().getState() == TaskState.INACTIVE) {
+                  if (index == -1) {
+                    dataSet.add(event.task());
+                  }
+                }
+              }
+            } else if(event.option() == Option.REMOVE) {
+              int index = dataSet.indexOf((t) -> t.getId().equals(event.task().getId()));
+              if(index != -1) {
+                dataSet.remove(index);
+              }
+            }
+          }
+        }
       });
     }
   }

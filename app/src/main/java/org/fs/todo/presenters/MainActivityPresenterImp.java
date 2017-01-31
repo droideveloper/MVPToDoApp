@@ -30,10 +30,12 @@ import org.fs.todo.commons.SimpleTextWatcher;
 import org.fs.todo.commons.ToDoStorage;
 import org.fs.todo.commons.components.DaggerPresenterComponent;
 import org.fs.todo.commons.modules.PresenterModule;
+import org.fs.todo.entities.Option;
 import org.fs.todo.entities.Task;
 import org.fs.todo.entities.TaskState;
 import org.fs.todo.entities.events.AddTaskEvent;
 import org.fs.todo.entities.events.ChangeTaskEvent;
+import org.fs.todo.entities.events.DisplayEvent;
 import org.fs.todo.entities.events.RemoveTaskEvent;
 import org.fs.todo.views.MainActivityView;
 import org.fs.todo.views.adapters.StateToDoAdapter;
@@ -82,9 +84,9 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(created -> {
             if (created) {
-              // say that we have it.
+              BusManager.send(new DisplayEvent(task, Option.ADD));
             }
-          }, this::log, () -> log("task created"));
+          }, this::log);
       } else if (e instanceof RemoveTaskEvent) {
         RemoveTaskEvent event = (RemoveTaskEvent) e;
 
@@ -93,26 +95,26 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(deleted -> {
             if (deleted) {
-              // say that we deleted it.
+              BusManager.send(new DisplayEvent(event.task(), Option.REMOVE));
             }
-          }, this::log, () -> log("task deleted"));
+          }, this::log);
       } else if (e instanceof ChangeTaskEvent) {
         ChangeTaskEvent event = (ChangeTaskEvent) e;
-        Task task = event.task()
-            .newBuilder()
-            .state(event.change() ? TaskState.INACTIVE : TaskState.ACTIVE)
-            .build();
 
-        storage.update(task)
+        storage.update(event.task())
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(updated -> {
             if (updated) {
-              // say that we updated it.
+              BusManager.send(new DisplayEvent(event.task(), Option.CHANGE));
             }
-          }, this::log, () -> log("task updated"));
+          }, this::log);
       }
     });
+  }
+
+  @Override public void onStop() {
+    BusManager.remove(register);
   }
 
   @Override public TextWatcher provideTextWatcher() {

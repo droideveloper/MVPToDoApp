@@ -13,20 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.entities.events;
+package org.fs.todo.entities;
 
-import org.fs.common.IEvent;
-import org.fs.todo.entities.Task;
-
-public final class ChangeTaskEvent implements IEvent {
-
-  private final Task task;
-
-  public ChangeTaskEvent(final Task task) {
-    this.task = task;
-  }
-
-  public final Task task() {
-    return this.task;
-  }
+public enum Option {
+  ADD,
+  REMOVE,
+  CHANGE
 }

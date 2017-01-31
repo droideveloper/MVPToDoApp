@@ -16,17 +16,24 @@
 package org.fs.todo.entities.events;
 
 import org.fs.common.IEvent;
+import org.fs.todo.entities.Option;
 import org.fs.todo.entities.Task;
 
-public final class ChangeTaskEvent implements IEvent {
+public final class DisplayEvent implements IEvent {
 
   private final Task task;
+  private final Option option;
 
-  public ChangeTaskEvent(final Task task) {
+  public DisplayEvent(final Task task, final Option option) {
     this.task = task;
+    this.option = option;
   }
 
   public final Task task() {
-    return this.task;
+    return task;
+  }
+
+  public final Option option() {
+    return option;
   }
 }
