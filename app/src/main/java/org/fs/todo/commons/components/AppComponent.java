@@ -18,6 +18,7 @@ package org.fs.todo.commons.components;
 import android.content.Context;
 import dagger.Component;
 import javax.inject.Singleton;
+import org.fs.todo.commons.ToDoStorage;
 import org.fs.todo.commons.modules.AppModule;
 
 @Singleton
@@ -25,4 +26,5 @@ import org.fs.todo.commons.modules.AppModule;
 public interface AppComponent {
   //might want to provide app level items such as prefManager, DbManager, FileManager, even EndpointService
   Context context();
+  ToDoStorage storage();
 }

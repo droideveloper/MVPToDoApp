@@ -15,8 +15,9 @@
  */
 package org.fs.todo.presenters;
 
+import android.content.Intent;
 import org.fs.common.IPresenter;
 
 public interface MainActivityPresenter extends IPresenter {
-
+  void queryIntent(Intent query);
 }

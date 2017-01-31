@@ -22,6 +22,8 @@ import org.fs.todo.views.TaskStateFragmentView;
 public class TaskStateFragmentPresenterImp extends AbstractPresenter<TaskStateFragmentView>
     implements TaskStateFragmentPresenter {
 
+  public final static String KEY_DATA_SET = "key.task.array";
+
   public TaskStateFragmentPresenterImp(TaskStateFragmentView view) {
     super(view);
   }

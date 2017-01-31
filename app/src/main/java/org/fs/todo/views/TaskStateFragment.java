@@ -28,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import org.fs.core.AbstractFragment;
@@ -37,6 +38,7 @@ import org.fs.todo.commons.components.DaggerFragmentComponent;
 import org.fs.todo.commons.modules.FragmentModule;
 import org.fs.todo.entities.Task;
 import org.fs.todo.presenters.TaskStateFragmentPresenter;
+import org.fs.todo.presenters.TaskStateFragmentPresenterImp;
 import org.fs.todo.views.adapters.ToDoAdapter;
 
 public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresenter>
@@ -51,6 +53,15 @@ public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresent
 
   private WeakReference<View> viewReference;
   private Unbinder unbinder;
+
+  public static TaskStateFragment newInstance(List<Task> dataSet) {
+    Bundle args = new Bundle();
+    args.putParcelableArrayList(TaskStateFragmentPresenterImp.KEY_DATA_SET, new ArrayList<>(dataSet));
+
+    TaskStateFragment fragment = new TaskStateFragment();
+    fragment.setArguments(args);
+    return fragment;
+  }
 
   @Nullable @Override
   public View onCreateView(LayoutInflater factory, ViewGroup parent, Bundle restoreState) {

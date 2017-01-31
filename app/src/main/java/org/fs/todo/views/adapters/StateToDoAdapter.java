@@ -30,6 +30,7 @@ import java8.util.stream.StreamSupport;
 import org.fs.todo.BuildConfig;
 import org.fs.todo.entities.Task;
 import org.fs.todo.entities.TaskState;
+import org.fs.todo.views.TaskStateFragment;
 
 public class StateToDoAdapter extends FragmentPagerAdapter {
 
@@ -49,7 +50,7 @@ public class StateToDoAdapter extends FragmentPagerAdapter {
       int counter = 0;
       for (Map.Entry<TaskState, List<Task>> entry: dataSet.entrySet()) {
         if(counter == position) {
-          // TODO implement Fragment
+          return TaskStateFragment.newInstance(entry.getValue());
         }
       }
     }

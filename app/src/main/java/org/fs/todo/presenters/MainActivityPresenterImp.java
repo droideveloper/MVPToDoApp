@@ -15,6 +15,7 @@
  */
 package org.fs.todo.presenters;
 
+import android.content.Intent;
 import android.util.Log;
 import java.util.Locale;
 import org.fs.common.AbstractPresenter;
@@ -46,6 +47,10 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
   }
 
   @Override public void onStop() { }
+
+  @Override public void queryIntent(Intent query) {
+    log(query.toString());
+  }
 
   @Override protected String getClassTag() {
     return MainActivityPresenterImp.class.getSimpleName();

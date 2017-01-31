@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">TO-DO</string>
+  <string name="toolbar_hint">What needs to be done</string>
 </resources>

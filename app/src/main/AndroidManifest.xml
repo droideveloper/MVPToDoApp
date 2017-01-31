@@ -10,11 +10,27 @@
       android:name=".ToDoApplication"
       android:theme="@style/AppTheme">
 
-    <activity android:name=".views.MainActivity">
+    <activity android:name=".views.MainActivity"
+              android:configChanges="orientation|screenSize|keyboard"
+              android:launchMode="singleTop">
+
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
+
+      <intent-filter>
+        <action android:name="android.intent.action.SEARCH" />
+      </intent-filter>
+
+      <meta-data
+          android:name="android.app.default_searchable"
+          android:value=".views.MainActivity" />
+
+      <meta-data
+          android:name="android.app.searchable"
+          android:resource="@xml/searchable" />
+
     </activity>
 
   </application>

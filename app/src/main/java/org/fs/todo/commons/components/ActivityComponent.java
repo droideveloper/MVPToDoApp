@@ -21,7 +21,7 @@ import org.fs.todo.commons.scopes.PerActivity;
 import org.fs.todo.views.MainActivity;
 
 @PerActivity
-@Component(modules = ActivityModule.class)
+@Component(modules = ActivityModule.class, dependencies = AppComponent.class)
 public interface ActivityComponent {
   void inject(MainActivity activity);
 }

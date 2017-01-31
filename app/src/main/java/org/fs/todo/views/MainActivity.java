@@ -15,12 +15,17 @@
  */
 package org.fs.todo.views;
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ProgressBar;
 import butterknife.BindView;
@@ -30,6 +35,8 @@ import javax.inject.Inject;
 import org.fs.core.AbstractActivity;
 import org.fs.todo.BuildConfig;
 import org.fs.todo.R;
+import org.fs.todo.ToDoApplication;
+import org.fs.todo.commons.components.AppComponent;
 import org.fs.todo.commons.components.DaggerActivityComponent;
 import org.fs.todo.commons.modules.ActivityModule;
 import org.fs.todo.presenters.MainActivityPresenter;
@@ -50,15 +57,27 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
     this.unbinder = ButterKnife.bind(this);
     //inject it this way
     DaggerActivityComponent.builder()
+        .appComponent(component())
         .activityModule(new ActivityModule(this))
         .build()
         .inject(this);
+
+    presenter.queryIntent(getIntent());
     presenter.restoreState(restoreState != null ? restoreState : getIntent().getExtras());
     presenter.onCreate();
   }
 
+  @Override protected void onNewIntent(Intent intent) {
+    presenter.queryIntent(intent);
+  }
+
   @Override public void setUp() {
-    toolbar.setTitle(null);
+    setSupportActionBar(toolbar);
+    ActionBar supportActionBar = getSupportActionBar();
+    if (supportActionBar != null) {
+      supportActionBar.setDisplayShowTitleEnabled(false);
+      supportActionBar.setDisplayHomeAsUpEnabled(false);
+    }
   }
 
   @Override public void onSaveInstanceState(Bundle storeState) {
@@ -106,6 +125,17 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
     }
   }
 
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.search_options, menu);
+    //only way of doing this is this
+    Context context = getContext();
+    SearchManager searchManager = (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
+    SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+    searchView.setIconified(true);
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    return super.onCreateOptionsMenu(menu);
+  }
+
   @Override public void showProgress() {
     progress.setVisibility(View.VISIBLE);
     progress.setIndeterminate(true);
@@ -143,5 +173,13 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
 
   private View view() {
     return findViewById(android.R.id.content);
+  }
+
+  private AppComponent component() {
+    ToDoApplication app = (ToDoApplication) getApplication();
+    if (app != null) {
+      return app.provideAppComponent();
+    }
+    return null;
   }
 }
