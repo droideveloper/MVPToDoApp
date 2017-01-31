@@ -27,13 +27,15 @@ import org.fs.core.AbstractRecyclerViewHolder;
 import org.fs.todo.BuildConfig;
 import org.fs.todo.R;
 import org.fs.todo.entities.Task;
-import org.fs.todo.entities.events.CheckStateChangedEvent;
+import org.fs.todo.entities.events.ChangeTaskEvent;
+import org.fs.todo.entities.events.RemoveTaskEvent;
 
 import static org.fs.util.ViewUtility.findViewById;
 
 public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
 
   private TextView text;
+  private View close;
   private RadioButton checkbox;
 
   private int strikeColor  = Color.parseColor("#D9D9D9");
@@ -44,8 +46,8 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
   public ToDoViewHolder(View view) {
     super(view);
     text = findViewById(view, R.id.text);
+    close = findViewById(view, R.id.close);
     checkbox = findViewById(view, R.id.checkbox);
-    checkbox.setOnCheckedChangeListener((check, state) -> BusManager.send(new CheckStateChangedEvent(state, data)));
   }
 
   @Override protected String getClassTag() {
@@ -70,7 +72,7 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
         str.setSpan(new StrikethroughSpan(), 0, data.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         text.setText(str);
         text.setTextColor(strikeColor);
-        checkbox.setChecked(true);
+        checkbox.setChecked(true); // check if this state only send by change
         break;
       }
       case COMPLETED:
@@ -78,5 +80,8 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
         break;
       }
     }
+    //reliable place is here.
+    checkbox.setOnCheckedChangeListener((check, state) -> BusManager.send(new ChangeTaskEvent(state, this.data)));
+    close.setOnClickListener((v) -> BusManager.send(new RemoveTaskEvent(data)));
   }
 }

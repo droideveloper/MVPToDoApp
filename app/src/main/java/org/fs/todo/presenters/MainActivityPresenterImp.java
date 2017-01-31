@@ -21,22 +21,34 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
+import java.util.Date;
 import javax.inject.Inject;
 import org.fs.common.AbstractPresenter;
 import org.fs.common.BusManager;
 import org.fs.todo.BuildConfig;
 import org.fs.todo.commons.SimpleTextWatcher;
+import org.fs.todo.commons.ToDoStorage;
 import org.fs.todo.commons.components.DaggerPresenterComponent;
 import org.fs.todo.commons.modules.PresenterModule;
+import org.fs.todo.entities.Task;
+import org.fs.todo.entities.TaskState;
 import org.fs.todo.entities.events.AddTaskEvent;
+import org.fs.todo.entities.events.ChangeTaskEvent;
+import org.fs.todo.entities.events.RemoveTaskEvent;
 import org.fs.todo.views.MainActivityView;
 import org.fs.todo.views.adapters.StateToDoAdapter;
 import org.fs.util.StringUtility;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView>
     implements MainActivityPresenter {
 
   @Inject StateToDoAdapter todoAdapter;
+  @Inject ToDoStorage storage;
+
+  private Subscription register;
 
   public MainActivityPresenterImp(MainActivityView view) {
     super(view);
@@ -55,6 +67,52 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
     if(view.isAvailable()) {
       view.setStateAdapter(todoAdapter);
     }
+    register = BusManager.add((e) -> {
+      if (e instanceof AddTaskEvent) {
+        AddTaskEvent event = (AddTaskEvent) e;
+        Task task = new Task.Builder()
+          .updatedAt(new Date())
+          .createdAt(new Date())
+          .text(event.text())
+          .state(TaskState.ACTIVE)
+          .build();
+
+        storage.create(task)
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(created -> {
+            if (created) {
+              // say that we have it.
+            }
+          }, this::log, () -> log("task created"));
+      } else if (e instanceof RemoveTaskEvent) {
+        RemoveTaskEvent event = (RemoveTaskEvent) e;
+
+        storage.delete(event.task())
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(deleted -> {
+            if (deleted) {
+              // say that we deleted it.
+            }
+          }, this::log, () -> log("task deleted"));
+      } else if (e instanceof ChangeTaskEvent) {
+        ChangeTaskEvent event = (ChangeTaskEvent) e;
+        Task task = event.task()
+            .newBuilder()
+            .state(event.change() ? TaskState.INACTIVE : TaskState.ACTIVE)
+            .build();
+
+        storage.update(task)
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(updated -> {
+            if (updated) {
+              // say that we updated it.
+            }
+          }, this::log, () -> log("task updated"));
+      }
+    });
   }
 
   @Override public TextWatcher provideTextWatcher() {

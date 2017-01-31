@@ -18,18 +18,18 @@ package org.fs.todo.entities.events;
 import org.fs.common.IEvent;
 import org.fs.todo.entities.Task;
 
-public final class CheckStateChangedEvent implements IEvent {
+public final class ChangeTaskEvent implements IEvent {
 
-  private final boolean newState;
+  private final boolean change;
   private final Task task;
 
-  public CheckStateChangedEvent(final boolean newState, final Task task) {
-    this.newState = newState;
+  public ChangeTaskEvent(final boolean change, final Task task) {
+    this.change = change;
     this.task = task;
   }
 
-  public final boolean newState() {
-    return this.newState;
+  public final boolean change() {
+    return this.change;
   }
 
   public final Task task() {
