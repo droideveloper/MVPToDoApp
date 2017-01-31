@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
@@ -40,6 +41,7 @@ import org.fs.todo.commons.components.AppComponent;
 import org.fs.todo.commons.components.DaggerActivityComponent;
 import org.fs.todo.commons.modules.ActivityModule;
 import org.fs.todo.presenters.MainActivityPresenter;
+import org.fs.todo.views.adapters.StateToDoAdapter;
 
 public class MainActivity extends AbstractActivity<MainActivityPresenter>
     implements MainActivityView {
@@ -57,7 +59,7 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
     this.unbinder = ButterKnife.bind(this);
     //inject it this way
     DaggerActivityComponent.builder()
-        .appComponent(component())
+        .appComponent(provideAppComponent())
         .activityModule(new ActivityModule(this))
         .build()
         .inject(this);
@@ -127,12 +129,12 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.search_options, menu);
-    //only way of doing this is this
+    // one way of doing this is this
     Context context = getContext();
     SearchManager searchManager = (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
     SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-    searchView.setIconified(true);
     searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    // set up search
     return super.onCreateOptionsMenu(menu);
   }
 
@@ -149,6 +151,14 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
   @Override public void finish() {
     super.finish();
     overridePendingTransition(R.anim.scale_in, R.anim.translate_right_out);
+  }
+
+  @Override public void setStateAdapter(StateToDoAdapter stateAdapter) {
+    viewPager.setAdapter(stateAdapter);
+  }
+
+  @Override public FragmentManager provideFragmentManager() {
+    return getSupportFragmentManager();
   }
 
   @Override public String getStringResource(@StringRes int stringId) {
@@ -175,7 +185,7 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
     return findViewById(android.R.id.content);
   }
 
-  private AppComponent component() {
+  @Override public AppComponent provideAppComponent() {
     ToDoApplication app = (ToDoApplication) getApplication();
     if (app != null) {
       return app.provideAppComponent();

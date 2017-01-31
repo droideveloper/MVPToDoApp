@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
 /*
  * To-Do Copyright (C) 2017 Fatih.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,20 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.views;
-
-import android.support.v4.app.FragmentManager;
-import org.fs.common.IView;
-import org.fs.todo.commons.components.AppComponent;
-import org.fs.todo.views.adapters.StateToDoAdapter;
-
-public interface MainActivityView extends IView {
-  void setUp();
-  void showProgress();
-  void hideProgress();
-
-  void setStateAdapter(StateToDoAdapter stateAdapter);
-
-  AppComponent  provideAppComponent();
-  FragmentManager provideFragmentManager();
-}
+ -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item>
+    <shape android:shape="rectangle">
+      <stroke android:color="@color/colorPrimary"
+              android:width="1dp" />
+      <solid android:color="@color/colorListBg" />
+    </shape>
+  </item>
+  <item android:bottom="1dp">
+    <shape android:shape="rectangle">
+      <solid android:color="@color/colorListBg" />
+    </shape>
+  </item>
+</layer-list>

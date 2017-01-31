@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.views;
+package org.fs.todo.commons.components;
 
-import android.support.v4.app.FragmentManager;
-import org.fs.common.IView;
-import org.fs.todo.commons.components.AppComponent;
-import org.fs.todo.views.adapters.StateToDoAdapter;
+import dagger.Component;
+import org.fs.todo.commons.modules.PresenterModule;
+import org.fs.todo.commons.scopes.PerPresenter;
+import org.fs.todo.presenters.MainActivityPresenterImp;
+import org.fs.todo.presenters.TaskStateFragmentPresenterImp;
 
-public interface MainActivityView extends IView {
-  void setUp();
-  void showProgress();
-  void hideProgress();
-
-  void setStateAdapter(StateToDoAdapter stateAdapter);
-
-  AppComponent  provideAppComponent();
-  FragmentManager provideFragmentManager();
+@PerPresenter
+@Component(modules = PresenterModule.class, dependencies = AppComponent.class)
+public interface PresenterComponent {
+  void inject(MainActivityPresenterImp presenter);
+  void inject(TaskStateFragmentPresenterImp presenter);
 }

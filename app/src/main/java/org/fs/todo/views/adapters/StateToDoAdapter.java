@@ -18,54 +18,41 @@ package org.fs.todo.views.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.util.Pair;
 import android.util.Log;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
 import org.fs.todo.BuildConfig;
-import org.fs.todo.entities.Task;
-import org.fs.todo.entities.TaskState;
 import org.fs.todo.views.TaskStateFragment;
 
 public class StateToDoAdapter extends FragmentPagerAdapter {
 
-  private Map<TaskState, List<Task>> dataSet;
+  private List<Pair<Integer, String>> dataSet;
 
-  public StateToDoAdapter(FragmentManager fm, List<Task> data) {
+  public StateToDoAdapter(FragmentManager fm, List<Pair<Integer, String>> dataSet) {
     super(fm);
-    dataSet = new HashMap<>();
-    StreamSupport.stream(Arrays.asList(TaskState.ACTIVE, TaskState.INACTIVE, TaskState.COMPLETED))
-        .forEach(state -> dataSet.put(state, StreamSupport.stream(data)
-                                                          .filter(entry -> entry.getState() == state)
-                                                          .collect(Collectors.toList())));
+    this.dataSet = dataSet;
   }
 
   @Override public Fragment getItem(int position) {
     if(dataSet != null) {
-      int counter = 0;
-      for (Map.Entry<TaskState, List<Task>> entry: dataSet.entrySet()) {
-        if(counter == position) {
-          return TaskStateFragment.newInstance(entry.getValue());
-        }
-      }
+      return StreamSupport.stream(dataSet)
+          .map(x -> TaskStateFragment.newInstance(x.first))
+          .collect(Collectors.toList())
+          .get(position);
     }
     return null;
   }
 
   @Override public CharSequence getPageTitle(int position) {
     if(dataSet != null) {
-      int counter = 0;
-      for (Map.Entry<TaskState, List<Task>> entry : dataSet.entrySet()) {
-        if (position == counter) {
-          return String.valueOf(entry.getKey());
-        }
-        counter++;
-      }
+      return StreamSupport.stream(dataSet)
+          .map(x -> x.second)
+          .collect(Collectors.toList())
+          .get(position);
     }
     return super.getPageTitle(position);
   }

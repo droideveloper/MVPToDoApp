@@ -27,8 +27,40 @@ import org.fs.todo.BuildConfig;
 import org.fs.todo.R;
 import org.fs.todo.entities.Task;
 import org.fs.todo.views.vh.ToDoViewHolder;
+import org.fs.util.IPropertyChangedListener;
+import org.fs.util.ObservableList;
 
 public class ToDoAdapter extends AbstractRecyclerAdapter<Task, ToDoViewHolder> {
+
+  public ToDoAdapter(ObservableList<Task> dataSet, Context context) {
+    super(dataSet, context);
+    // we do track change with this detection
+    dataSet.registerPropertyChangedListener(new IPropertyChangedListener() {
+      @Override public void notifyItemsRemoved(int index, int size) {
+        if(size == 1) {
+          notifyItemRemoved(index);
+        } else {
+          notifyItemRangeRemoved(index, size);
+        }
+      }
+
+      @Override public void notifyItemsInserted(int index, int size) {
+        if(size == 1) {
+          notifyItemInserted(index);
+        } else {
+          notifyItemRangeInserted(index, size);
+        }
+      }
+
+      @Override public void notifyItemsChanged(int index, int size) {
+        if(size == 1) {
+          notifyItemChanged(index);
+        } else {
+          notifyItemRangeChanged(index, size);
+        }
+      }
+    });
+  }
 
   public ToDoAdapter(Context context) {
     this(new ArrayList<>(), context);

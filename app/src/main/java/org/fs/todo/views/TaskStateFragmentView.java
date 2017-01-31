@@ -15,12 +15,11 @@
  */
 package org.fs.todo.views;
 
-import java.util.List;
 import org.fs.common.IView;
-import org.fs.todo.entities.Task;
+import org.fs.todo.commons.components.AppComponent;
 
 public interface TaskStateFragmentView extends IView {
 
-  void setTaskList(List<Task> taskList);
   void setUp();
+  AppComponent provideAppComponent();
 }

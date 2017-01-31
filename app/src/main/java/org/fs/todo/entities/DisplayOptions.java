@@ -13,20 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.views;
+package org.fs.todo.entities;
 
-import android.support.v4.app.FragmentManager;
-import org.fs.common.IView;
-import org.fs.todo.commons.components.AppComponent;
-import org.fs.todo.views.adapters.StateToDoAdapter;
+public final class DisplayOptions {
 
-public interface MainActivityView extends IView {
-  void setUp();
-  void showProgress();
-  void hideProgress();
-
-  void setStateAdapter(StateToDoAdapter stateAdapter);
-
-  AppComponent  provideAppComponent();
-  FragmentManager provideFragmentManager();
+  public final static int ALL       = 0x01;
+  public final static int ACTIVE    = 0x02;
+  public final static int INACTIVE  = 0x03;
 }

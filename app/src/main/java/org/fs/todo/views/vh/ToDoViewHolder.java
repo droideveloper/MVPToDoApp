@@ -15,6 +15,7 @@
  */
 package org.fs.todo.views.vh;
 
+import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
@@ -34,6 +35,9 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
 
   @BindView(R.id.text) TextView text;
   @BindView(R.id.checkbox) CheckBox checkbox;
+
+  private int strikeColor  = Color.parseColor("#F0888888");
+  private int defaultColor = Color.parseColor("#888888");
 
   private Task data;
 
@@ -56,6 +60,7 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
     switch (data.getState()) {
       case ACTIVE: {
         text.setText(data.getText());
+        text.setTextColor(defaultColor);
         checkbox.setChecked(false);
         break;
       }
@@ -63,6 +68,7 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
         SpannableString str = new SpannableString(data.getText());
         str.setSpan(new StrikethroughSpan(), 0, data.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         text.setText(str);
+        text.setTextColor(strikeColor);
         checkbox.setChecked(true);
         break;
       }

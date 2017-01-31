@@ -16,15 +16,18 @@
 package org.fs.todo.presenters;
 
 import android.content.Intent;
-import android.util.Log;
-import java.util.Locale;
+import javax.inject.Inject;
 import org.fs.common.AbstractPresenter;
-import org.fs.common.ThreadManager;
 import org.fs.todo.BuildConfig;
+import org.fs.todo.commons.components.DaggerPresenterComponent;
+import org.fs.todo.commons.modules.PresenterModule;
 import org.fs.todo.views.MainActivityView;
+import org.fs.todo.views.adapters.StateToDoAdapter;
 
 public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView>
     implements MainActivityPresenter {
+
+  @Inject StateToDoAdapter todoAdapter;
 
   public MainActivityPresenterImp(MainActivityView view) {
     super(view);
@@ -32,21 +35,18 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
 
   @Override public void onCreate() {
     view.setUp();
-    view.showProgress();
+    DaggerPresenterComponent.builder()
+        .appComponent(view.provideAppComponent())
+        .presenterModule(new PresenterModule(view.provideFragmentManager()))
+        .build()
+        .inject(this);
   }
 
   @Override public void onStart() {
-    view.showError(String.format(Locale.getDefault(), "Will hide progress, in %d seconds.", 5), "UNDO", (callback) -> {
-      log(Log.ERROR, "Changed Context");
-    });
-    ThreadManager.runOnUiThreadDelayed(5000, () -> {
-      if(view.isAvailable()) {
-        view.hideProgress();
-      }
-    });
+    if(view.isAvailable()) {
+      view.setStateAdapter(todoAdapter);
+    }
   }
-
-  @Override public void onStop() { }
 
   @Override public void queryIntent(Intent query) {
     log(query.toString());

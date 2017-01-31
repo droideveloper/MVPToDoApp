@@ -46,7 +46,7 @@ import org.fs.todo.views.adapters.ToDoAdapter;
     return new DefaultItemAnimator();
   }
 
-  @PerFragment @Provides public ToDoAdapter provideAdapter() {
-    return new ToDoAdapter(view.getContext());
+  @PerFragment @Provides public ToDoAdapter provideAdapter(TaskStateFragmentPresenter presenter) {
+    return new ToDoAdapter(presenter.provideObservableList(), view.getContext());
   }
 }

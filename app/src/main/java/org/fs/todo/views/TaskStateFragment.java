@@ -24,27 +24,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 import javax.inject.Inject;
 import org.fs.core.AbstractFragment;
 import org.fs.todo.BuildConfig;
 import org.fs.todo.R;
+import org.fs.todo.ToDoApplication;
+import org.fs.todo.commons.components.AppComponent;
 import org.fs.todo.commons.components.DaggerFragmentComponent;
 import org.fs.todo.commons.modules.FragmentModule;
-import org.fs.todo.entities.Task;
 import org.fs.todo.presenters.TaskStateFragmentPresenter;
 import org.fs.todo.presenters.TaskStateFragmentPresenterImp;
 import org.fs.todo.views.adapters.ToDoAdapter;
+import org.fs.util.ViewUtility;
 
 public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresenter>
     implements TaskStateFragmentView {
 
-  @BindView(R.id.recycler) RecyclerView recycler;
+  private RecyclerView recycler;
 
   @Inject TaskStateFragmentPresenter presenter;
   @Inject RecyclerView.LayoutManager layoutManager;
@@ -52,11 +49,10 @@ public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresent
   @Inject ToDoAdapter todoAdapter;
 
   private WeakReference<View> viewReference;
-  private Unbinder unbinder;
 
-  public static TaskStateFragment newInstance(List<Task> dataSet) {
+  public static TaskStateFragment newInstance(final int displayOption) {
     Bundle args = new Bundle();
-    args.putParcelableArrayList(TaskStateFragmentPresenterImp.KEY_DATA_SET, new ArrayList<>(dataSet));
+    args.putInt(TaskStateFragmentPresenterImp.KEY_OPTIONS, displayOption);
 
     TaskStateFragment fragment = new TaskStateFragment();
     fragment.setArguments(args);
@@ -66,7 +62,7 @@ public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresent
   @Nullable @Override
   public View onCreateView(LayoutInflater factory, ViewGroup parent, Bundle restoreState) {
     final View view = factory.inflate(R.layout.view_task_state_fragment, parent, false);
-    this.unbinder = ButterKnife.bind(view);
+    recycler = ViewUtility.findViewById(view, R.id.recycler);
     viewReference = new WeakReference<>(view);
     return view;
   }
@@ -103,14 +99,6 @@ public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresent
     super.onStop();
   }
 
-  @Override public void onDestroy() {
-    presenter.onDestroy();
-    if(unbinder != null) {
-      unbinder.unbind();
-    }
-    super.onDestroy();
-  }
-
   @Override public void showError(String errorString) {
     final View view = view();
     if (view != null) {
@@ -133,12 +121,16 @@ public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresent
     }
   }
 
-  @Override public void setTaskList(List<Task> taskList) {
-    todoAdapter.appendData(taskList, false);
-  }
-
   @Override public String getStringResource(@StringRes int stringId) {
     return getActivity().getString(stringId);
+  }
+
+  @Override public AppComponent provideAppComponent() {
+    ToDoApplication app = (ToDoApplication) getActivity().getApplication();
+    if(app != null) {
+      return app.provideAppComponent();
+    }
+    return null;
   }
 
   @Override public Context getContext() {

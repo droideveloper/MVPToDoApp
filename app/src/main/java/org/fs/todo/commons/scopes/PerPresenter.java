@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.views;
+package org.fs.todo.commons.scopes;
 
-import android.support.v4.app.FragmentManager;
-import org.fs.common.IView;
-import org.fs.todo.commons.components.AppComponent;
-import org.fs.todo.views.adapters.StateToDoAdapter;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import javax.inject.Scope;
 
-public interface MainActivityView extends IView {
-  void setUp();
-  void showProgress();
-  void hideProgress();
-
-  void setStateAdapter(StateToDoAdapter stateAdapter);
-
-  AppComponent  provideAppComponent();
-  FragmentManager provideFragmentManager();
-}
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
+public @interface PerPresenter {}

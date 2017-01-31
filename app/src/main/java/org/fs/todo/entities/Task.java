@@ -27,7 +27,7 @@ import org.fs.util.StringUtility;
 @DatabaseTable(tableName = "Tasks")
 public final class Task extends AbstractEntity {
 
-  @DatabaseField(id = true, generatedId = true)
+  @DatabaseField(generatedId = true)
   private long id;
   @DatabaseField(columnName = "text", dataType = DataType.LONG_STRING)
   private String text;
