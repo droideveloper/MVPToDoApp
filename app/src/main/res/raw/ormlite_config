@@ -1,0 +1,35 @@
+#
+# generated on 2017/01/31 12:58:32
+#
+# --table-start--
+dataClass=org.fs.todo.entities.Task
+tableName=Tasks
+# --table-fields-start--
+# --field-start--
+fieldName=id
+id=true
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=text
+columnName=text
+dataPersister=LONG_STRING
+# --field-end--
+# --field-start--
+fieldName=state
+columnName=state
+dataPersister=ENUM_INTEGER
+# --field-end--
+# --field-start--
+fieldName=createdAt
+columnName=createdAt
+dataPersister=DATE_TIME
+# --field-end--
+# --field-start--
+fieldName=updatedAt
+columnName=updatedAt
+dataPersister=DATE_TIME
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
