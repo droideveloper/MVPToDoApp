@@ -15,9 +15,11 @@
  */
 package org.fs.todo.presenters;
 
-import android.content.Intent;
+import android.text.TextWatcher;
+import android.widget.TextView;
 import org.fs.common.IPresenter;
 
 public interface MainActivityPresenter extends IPresenter {
-  void queryIntent(Intent query);
+  TextWatcher provideTextWatcher();
+  TextView.OnEditorActionListener provideEditorActionListener();
 }

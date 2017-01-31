@@ -28,19 +28,19 @@ import org.fs.util.StringUtility;
 public final class Task extends AbstractEntity {
 
   @DatabaseField(generatedId = true)
-  private long id;
+  private Long id;
   @DatabaseField(columnName = "text", dataType = DataType.LONG_STRING)
   private String text;
-  @DatabaseField(columnName = "state", dataType = DataType.ENUM_INTEGER)
-  private TaskState state;
-  @DatabaseField(columnName = "createdAt", dataType = DataType.DATE_TIME)
+  @DatabaseField(columnName = "state", dataType = DataType.INTEGER)
+  private int state;
+  @DatabaseField(columnName = "createdAt", dataType = DataType.DATE_STRING)
   private Date createdAt;
-  @DatabaseField(columnName = "updatedAt", dataType = DataType.DATE_TIME)
+  @DatabaseField(columnName = "updatedAt", dataType = DataType.DATE_STRING)
   private Date updatedAt;
 
   public Task() {/*default constructor*/}
 
-  private Task(long id, String text, TaskState state, Date createdAt, Date updatedAt) {
+  private Task(Long id, String text, int state, Date createdAt, Date updatedAt) {
     this.id = id;
     this.text = text;
     this.state = state;
@@ -52,7 +52,7 @@ public final class Task extends AbstractEntity {
     super(input);
   }
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
@@ -61,7 +61,7 @@ public final class Task extends AbstractEntity {
   }
 
   public TaskState getState() {
-    return state;
+    return TaskState.of(state);
   }
 
   public Date getCreatedAt() {
@@ -73,24 +73,31 @@ public final class Task extends AbstractEntity {
   }
 
   @Override protected void readParcel(Parcel input) {
-    this.id = input.readLong();
+    boolean hasId = input.readInt() == 1;
+    if (hasId) {
+      id = input.readLong();
+    }
     boolean hasText = input.readInt() == 1;
     if (hasText) {
       this.text = input.readString();
     }
-    this.state = TaskState.of(input.readInt());
+    this.state = input.readInt();
     this.createdAt = new Date(input.readLong());
     this.updatedAt = new Date(input.readLong());
   }
 
   @Override public void writeToParcel(Parcel out, int flags) {
-    out.writeLong(this.id);
+    boolean hasId = !StringUtility.isNullOrEmpty(id);
+    out.writeInt(hasId ? 1 : 0);
+    if (hasId) {
+      out.writeLong(id);
+    }
     boolean hasText = !StringUtility.isNullOrEmpty(text);
     out.writeInt(hasText ? 1 : 0);
     if (hasText) {
       out.writeString(text);
     }
-    out.writeInt(TaskState.of(this.state));
+    out.writeInt(this.state);
     out.writeLong(this.createdAt.getTime());
     out.writeLong(this.updatedAt.getTime());
   }
@@ -111,7 +118,7 @@ public final class Task extends AbstractEntity {
     return new Builder()
         .id(id)
         .text(text)
-        .state(state)
+        .state(TaskState.of(state))
         .createdAt(createdAt)
         .updatedAt(updatedAt);
   }
@@ -129,21 +136,21 @@ public final class Task extends AbstractEntity {
 
   public static class Builder {
 
-    private long id;
+    private Long id;
     private String text;
     private TaskState state;
     private Date createdAt;
     private Date updatedAt;
 
     public Builder() { }
-    public Builder id(long id) { this.id = id; return this; }
+    public Builder id(Long id) { this.id = id; return this; }
     public Builder text(String text) { this.text = text; return this; }
     public Builder state(TaskState state) { this.state = state; return this; }
     public Builder createdAt(Date createdAt) { this.createdAt = createdAt; return this; }
     public Builder updatedAt(Date updatedAt) { this.updatedAt = updatedAt; return this; }
 
     public Task build() {
-      return new Task(id, text, state, createdAt, updatedAt);
+      return new Task(id, text, TaskState.of(state), createdAt, updatedAt);
     }
   }
 }

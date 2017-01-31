@@ -20,10 +20,8 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
 import android.view.View;
-import android.widget.CheckBox;
+import android.widget.RadioButton;
 import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import org.fs.common.BusManager;
 import org.fs.core.AbstractRecyclerViewHolder;
 import org.fs.todo.BuildConfig;
@@ -31,19 +29,22 @@ import org.fs.todo.R;
 import org.fs.todo.entities.Task;
 import org.fs.todo.entities.events.CheckStateChangedEvent;
 
+import static org.fs.util.ViewUtility.findViewById;
+
 public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
 
-  @BindView(R.id.text) TextView text;
-  @BindView(R.id.checkbox) CheckBox checkbox;
+  private TextView text;
+  private RadioButton checkbox;
 
-  private int strikeColor  = Color.parseColor("#F0888888");
-  private int defaultColor = Color.parseColor("#888888");
+  private int strikeColor  = Color.parseColor("#D9D9D9");
+  private int defaultColor = Color.parseColor("#4D4D4D");
 
   private Task data;
 
   public ToDoViewHolder(View view) {
     super(view);
-    ButterKnife.bind(view);
+    text = findViewById(view, R.id.text);
+    checkbox = findViewById(view, R.id.checkbox);
     checkbox.setOnCheckedChangeListener((check, state) -> BusManager.send(new CheckStateChangedEvent(state, data)));
   }
 

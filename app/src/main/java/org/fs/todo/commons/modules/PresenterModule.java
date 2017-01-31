@@ -21,7 +21,6 @@ import android.support.v4.util.Pair;
 import dagger.Module;
 import dagger.Provides;
 import java.util.Arrays;
-import org.fs.todo.commons.scopes.PerPresenter;
 import org.fs.todo.entities.DisplayOptions;
 import org.fs.todo.views.adapters.StateToDoAdapter;
 
@@ -33,7 +32,7 @@ import org.fs.todo.views.adapters.StateToDoAdapter;
     this.fragmentManager = fragmentManager;
   }
 
-  @PerPresenter @Provides public StateToDoAdapter provideStateAdapter() {
+  @Provides public StateToDoAdapter provideStateAdapter() {
     return new StateToDoAdapter(fragmentManager,
         Arrays.asList(
             new Pair<>(DisplayOptions.ALL, "ALL"),

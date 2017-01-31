@@ -17,11 +17,11 @@ package org.fs.todo.commons.components;
 
 import dagger.Component;
 import org.fs.todo.commons.modules.PresenterModule;
-import org.fs.todo.commons.scopes.PerPresenter;
+import org.fs.todo.commons.scopes.PerFragment;
 import org.fs.todo.presenters.MainActivityPresenterImp;
 import org.fs.todo.presenters.TaskStateFragmentPresenterImp;
 
-@PerPresenter
+@PerFragment
 @Component(modules = PresenterModule.class, dependencies = AppComponent.class)
 public interface PresenterComponent {
   void inject(MainActivityPresenterImp presenter);

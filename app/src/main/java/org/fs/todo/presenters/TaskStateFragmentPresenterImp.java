@@ -62,7 +62,10 @@ public class TaskStateFragmentPresenterImp extends AbstractPresenter<TaskStateFr
 
   @Override public void restoreState(Bundle restoreState) {
     if(restoreState != null) {
-      dataSet = ObservableList.of(restoreState.getParcelableArrayList(KEY_DATA_SET));
+      // this was the reason why we do not have new context in position.
+      if(restoreState.containsKey(KEY_DATA_SET)) {
+        dataSet.addAll(restoreState.getParcelableArrayList(KEY_DATA_SET));
+      }
       displayOption = restoreState.getInt(KEY_OPTIONS, DisplayOptions.ALL);
     }
   }
@@ -83,8 +86,10 @@ public class TaskStateFragmentPresenterImp extends AbstractPresenter<TaskStateFr
           .toList()
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe((tasks) -> {
-            this.dataSet.addAll(tasks);
+          .subscribe(tasks -> {
+            if(view.isAvailable()) {
+              dataSet.addAll(tasks);
+            }
           }, this::log);
       }
       // register added

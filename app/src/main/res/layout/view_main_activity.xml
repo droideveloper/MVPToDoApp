@@ -1,40 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * To-Do Copyright (C) 2017 Fatih.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
     android:layout_width="match_parent">
 
-  <android.support.v7.widget.Toolbar
-    android:id="@+id/toolbar"
-    style="@style/ThemeOverlay.AppCompat.Light"
-    android:minHeight="?attr/actionBarSize"
-    android:background="?attr/colorPrimary"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
-
-  <android.support.v4.view.ViewPager
-      android:id="@+id/viewPager"
-      android:layout_below="@id/toolbar"
+  <LinearLayout
+      android:orientation="vertical"
       android:layout_width="match_parent"
+      android:layout_margin="5dp"
+      android:background="@drawable/view_bottom_bg"
       android:layout_height="match_parent">
 
-    <android.support.v4.view.PagerTitleStrip
+    <LinearLayout
         android:layout_width="match_parent"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:textColor="@color/colorPrimary"
-        android:background="@drawable/title_strip_bg"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:orientation="horizontal"
+        android:background="@drawable/item_view_bottom_bg"
+        android:padding="5dp">
 
-  </android.support.v4.view.ViewPager>
+      <ImageView
+          android:id="@+id/toggle"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:src="@drawable/ic_toggle_all" />
+
+      <EditText
+          android:id="@+id/editText"
+          android:inputType="text|textAutoComplete|textAutoCorrect|textCapSentences"
+          android:imeOptions="actionDone"
+          android:hint="@string/toolbar_hint"
+          android:textColorHint="@color/textInactiveColor"
+          android:textColor="@color/textActiveColor"
+          android:background="@android:color/transparent"
+          android:textStyle="italic"
+          android:minHeight="48dp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="15dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp">
+
+      <android.support.v4.view.PagerTitleStrip
+          android:layout_width="match_parent"
+          android:textSize="17sp"
+          android:layout_gravity="bottom"
+          android:gravity="center_vertical"
+          android:paddingTop="10dp"
+          android:padding="2dp"
+          android:paddingBottom="5dp"
+          android:textColor="@color/textActiveColor"
+          android:background="@drawable/title_strip_bg"
+          android:layout_height="48dp" />
+
+    </android.support.v4.view.ViewPager>
+
+  </LinearLayout>
 
   <ProgressBar
-    android:id="@+id/progress"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:indeterminate="false"
-    android:visibility="invisible"
-    android:layout_centerInParent="true"
-    style="@style/Widget.AppCompat.ProgressBar" />
+      android:id="@+id/progress"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:indeterminate="false"
+      android:visibility="invisible"
+      android:layout_centerInParent="true"
+      style="@style/Widget.AppCompat.ProgressBar" />
 
 </RelativeLayout>

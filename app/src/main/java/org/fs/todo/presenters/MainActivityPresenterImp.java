@@ -15,14 +15,23 @@
  */
 package org.fs.todo.presenters;
 
-import android.content.Intent;
+import android.graphics.Typeface;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 import javax.inject.Inject;
 import org.fs.common.AbstractPresenter;
+import org.fs.common.BusManager;
 import org.fs.todo.BuildConfig;
+import org.fs.todo.commons.SimpleTextWatcher;
 import org.fs.todo.commons.components.DaggerPresenterComponent;
 import org.fs.todo.commons.modules.PresenterModule;
+import org.fs.todo.entities.events.AddTaskEvent;
 import org.fs.todo.views.MainActivityView;
 import org.fs.todo.views.adapters.StateToDoAdapter;
+import org.fs.util.StringUtility;
 
 public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView>
     implements MainActivityPresenter {
@@ -48,8 +57,34 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
     }
   }
 
-  @Override public void queryIntent(Intent query) {
-    log(query.toString());
+  @Override public TextWatcher provideTextWatcher() {
+    return new SimpleTextWatcher() {
+      @Override public void afterTextChanged(Editable s) {
+        if(view.isAvailable()) {
+          String str = s.toString();
+          if (StringUtility.isNullOrEmpty(str)) {
+            view.setTextStyle(Typeface.ITALIC);
+          } else {
+            view.setTextStyle(Typeface.NORMAL);
+          }
+        }
+      }
+    };
+  }
+
+  @Override public TextView.OnEditorActionListener provideEditorActionListener() {
+    return (textView, actionId, event) -> {
+      if((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+        if (view.isAvailable()) {
+          String str = textView.getText().toString();
+          if (!StringUtility.isNullOrEmpty(str)) {
+            BusManager.send(new AddTaskEvent(str));
+            textView.setText(null);
+          }
+        }
+      }
+      return false;
+    };
   }
 
   @Override protected String getClassTag() {

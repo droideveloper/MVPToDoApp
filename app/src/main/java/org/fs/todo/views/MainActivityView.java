@@ -21,10 +21,11 @@ import org.fs.todo.commons.components.AppComponent;
 import org.fs.todo.views.adapters.StateToDoAdapter;
 
 public interface MainActivityView extends IView {
-  void setUp();
   void showProgress();
   void hideProgress();
 
+  void setUp();
+  void setTextStyle(int textStyle);
   void setStateAdapter(StateToDoAdapter stateAdapter);
 
   AppComponent  provideAppComponent();

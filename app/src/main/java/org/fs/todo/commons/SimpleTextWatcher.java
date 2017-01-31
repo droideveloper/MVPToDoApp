@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /*
  * To-Do Copyright (C) 2017 Fatih.
- *
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,9 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- -->
-<searchable
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:hint="@string/toolbar_hint"
-    android:icon="@android:drawable/ic_menu_edit"
-    android:imeOptions="actionDone" />
+package org.fs.todo.commons;
+
+import android.text.Editable;
+import android.text.TextWatcher;
+
+public class SimpleTextWatcher implements TextWatcher {
+
+  @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+  @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+  @Override public void afterTextChanged(Editable s) {}
+}

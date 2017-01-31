@@ -7,4 +7,10 @@
   <color name="colorListFrame">#888888</color>
   <color name="colorListBg">#F5F5F5</color>
   <color name="colorText">#333333</color>
+
+
+  <color name="textActiveColor">#4D4D4D</color>
+  <color name="textInactiveColor">#D9D9D9</color>
+  <color name="viewBackgroundColor">#F5F5F5</color>
+  <color name="itemViewBackgroundColor">#FFFFFF</color>
 </resources>

@@ -35,6 +35,6 @@ import org.fs.todo.commons.ToDoStorageImp;
   }
 
   @Singleton @Provides ToDoStorage provideStorage() {
-    return new ToDoStorageImp(context);
+   return new ToDoStorageImp(context);
   }
 }

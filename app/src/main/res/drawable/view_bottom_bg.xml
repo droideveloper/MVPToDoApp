@@ -17,14 +17,21 @@
  */
  -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-  <item>
+ <item android:left="10dp" android:right="10dp">
+   <shape android:shape="rectangle">
+     <stroke android:color="@color/textInactiveColor" android:width="1dp" />
+     <solid android:color="@color/itemViewBackgroundColor" />
+   </shape>
+ </item>
+  <item android:left="5dp" android:right="5dp" android:bottom="5dp">
     <shape android:shape="rectangle">
       <stroke android:color="@color/textInactiveColor" android:width="1dp" />
       <solid android:color="@color/itemViewBackgroundColor" />
     </shape>
   </item>
-  <item android:top="1dp">
+  <item android:bottom="10dp">
     <shape android:shape="rectangle">
+      <stroke android:color="@color/textInactiveColor" android:width="1dp" />
       <solid android:color="@color/itemViewBackgroundColor" />
     </shape>
   </item>

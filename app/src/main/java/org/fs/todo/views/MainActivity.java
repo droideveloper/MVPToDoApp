@@ -15,23 +15,17 @@
  */
 package org.fs.todo.views;
 
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import javax.inject.Inject;
 import org.fs.core.AbstractActivity;
 import org.fs.todo.BuildConfig;
@@ -47,16 +41,15 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
     implements MainActivityView {
 
   @Inject MainActivityPresenter presenter;
-  private Unbinder unbinder;
 
-  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.editText) EditText editText;
   @BindView(R.id.viewPager) ViewPager viewPager;
   @BindView(R.id.progress) ProgressBar progress;
 
   @Override public void onCreate(Bundle restoreState) {
     super.onCreate(restoreState);
     setContentView(R.layout.view_main_activity);
-    this.unbinder = ButterKnife.bind(this);
+    ButterKnife.bind(this);
     //inject it this way
     DaggerActivityComponent.builder()
         .appComponent(provideAppComponent())
@@ -64,22 +57,17 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
         .build()
         .inject(this);
 
-    presenter.queryIntent(getIntent());
     presenter.restoreState(restoreState != null ? restoreState : getIntent().getExtras());
     presenter.onCreate();
   }
 
-  @Override protected void onNewIntent(Intent intent) {
-    presenter.queryIntent(intent);
+  @Override public void setUp() {
+    editText.addTextChangedListener(presenter.provideTextWatcher());
+    editText.setOnEditorActionListener(presenter.provideEditorActionListener());
   }
 
-  @Override public void setUp() {
-    setSupportActionBar(toolbar);
-    ActionBar supportActionBar = getSupportActionBar();
-    if (supportActionBar != null) {
-      supportActionBar.setDisplayShowTitleEnabled(false);
-      supportActionBar.setDisplayHomeAsUpEnabled(false);
-    }
+  @Override public void setTextStyle(int textStyle) {
+    editText.setTypeface(null, textStyle);
   }
 
   @Override public void onSaveInstanceState(Bundle storeState) {
@@ -95,14 +83,6 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
   @Override public void onStop() {
     presenter.onStop();
     super.onStop();
-  }
-
-  @Override protected void onDestroy() {
-    presenter.onDestroy();
-    if(unbinder != null) {
-      unbinder.unbind();
-    }
-    super.onDestroy();
   }
 
   @Override public void showError(String errorString) {
@@ -125,17 +105,6 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
       });
       snackbar.show();
     }
-  }
-
-  @Override public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.search_options, menu);
-    // one way of doing this is this
-    Context context = getContext();
-    SearchManager searchManager = (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
-    SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-    // set up search
-    return super.onCreateOptionsMenu(menu);
   }
 
   @Override public void showProgress() {

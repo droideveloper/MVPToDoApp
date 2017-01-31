@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /*
  * To-Do Copyright (C) 2017 Fatih.
- *
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- -->
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+package org.fs.todo.entities.events;
 
-  <item android:id="@+id/search"
-        android:title="@string/toolbar_hint"
-        android:icon="@android:drawable/ic_menu_edit"
-        app:showAsAction="collapseActionView|ifRoom"
-        app:actionViewClass="android.support.v7.widget.SearchView" />
-</menu>
+import org.fs.common.IEvent;
+
+public final class AddTaskEvent implements IEvent {
+  private final String text;
+
+  public AddTaskEvent(final String text) {
+    this.text = text;
+  }
+
+  public final String text() {
+    return text;
+  }
+}
