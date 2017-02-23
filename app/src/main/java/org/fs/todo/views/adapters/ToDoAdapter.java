@@ -16,6 +16,7 @@
 package org.fs.todo.views.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,14 @@ public class ToDoAdapter extends AbstractRecyclerAdapter<Task, ToDoViewHolder>  
   public ToDoAdapter(ObservableList<Task> dataSet, Context context) {
     super(dataSet, context);
     dataSet.registerPropertyChangedListener(this);
+  }
+
+  @Override public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    super.onDetachedFromRecyclerView(recyclerView);
+    if (dataSet instanceof ObservableList<?>) {
+      ObservableList<?> observer = (ObservableList<?>) dataSet;
+      observer.unregisterPropertyChangedListener(this);
+    }
   }
 
   @Override public ToDoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

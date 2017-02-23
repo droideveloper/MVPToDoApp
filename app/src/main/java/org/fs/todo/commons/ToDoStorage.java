@@ -15,15 +15,16 @@
  */
 package org.fs.todo.commons;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.functions.Function;
 import java.util.List;
 import org.fs.todo.entities.Task;
-import rx.Observable;
-import rx.functions.Func1;
 
 public interface ToDoStorage {
 
   Observable<List<Task>> all();
-  Observable<Task> find(Func1<Task, Boolean> filter);
+  Single<Task> find(Function<Task, Boolean> filter);
   Observable<Boolean> create(Task task);
   Observable<Boolean> update(Task task);
   Observable<Boolean> delete(Task task);

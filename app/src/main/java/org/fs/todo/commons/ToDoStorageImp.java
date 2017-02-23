@@ -19,14 +19,15 @@ import android.content.Context;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.functions.Function;
 import java.sql.SQLException;
 import java.util.List;
 import org.fs.core.AbstractOrmliteHelper;
 import org.fs.todo.BuildConfig;
 import org.fs.todo.R;
 import org.fs.todo.entities.Task;
-import rx.Observable;
-import rx.functions.Func1;
 
 public final class ToDoStorageImp extends AbstractOrmliteHelper implements ToDoStorage {
 
@@ -60,9 +61,11 @@ public final class ToDoStorageImp extends AbstractOrmliteHelper implements ToDoS
         .map(RuntimeExceptionDao::queryForAll);
   }
 
-  @Override public Observable<Task> find(Func1<Task, Boolean> filter) {
-    return all().flatMap(Observable::from)
-        .takeFirst(filter);
+  @Override public Single<Task> find(Function<Task, Boolean> filter) {
+    return all()
+        .flatMap(Observable::fromIterable)
+        .filter(filter::apply)
+        .firstOrError();
   }
 
   @Override public Observable<Boolean> create(Task task) {

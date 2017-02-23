@@ -21,6 +21,9 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import java.util.Date;
 import javax.inject.Inject;
 import org.fs.common.AbstractPresenter;
@@ -40,9 +43,6 @@ import org.fs.todo.entities.events.RemoveTaskEvent;
 import org.fs.todo.views.MainActivityView;
 import org.fs.todo.views.adapters.StateToDoAdapter;
 import org.fs.util.StringUtility;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView>
     implements MainActivityPresenter {
@@ -50,7 +50,7 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
   @Inject StateToDoAdapter todoAdapter;
   @Inject ToDoStorage storage;
 
-  private Subscription register;
+  private Disposable register;
 
   public MainActivityPresenterImp(MainActivityView view) {
     super(view);

@@ -16,6 +16,10 @@
 package org.fs.todo.presenters;
 
 import android.os.Bundle;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 import org.fs.common.AbstractPresenter;
 import org.fs.common.BusManager;
@@ -31,10 +35,6 @@ import org.fs.todo.entities.events.DisplayEvent;
 import org.fs.todo.views.TaskStateFragmentView;
 import org.fs.util.Collections;
 import org.fs.util.ObservableList;
-import rx.Observable;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class TaskStateFragmentPresenterImp extends AbstractPresenter<TaskStateFragmentView>
     implements TaskStateFragmentPresenter {
@@ -46,7 +46,7 @@ public class TaskStateFragmentPresenterImp extends AbstractPresenter<TaskStateFr
 
   private ObservableList<Task> dataSet;
   private int                  displayOption;
-  private Subscription         register;
+  private Disposable           register;
 
   public TaskStateFragmentPresenterImp(TaskStateFragmentView view) {
     super(view);
@@ -83,7 +83,7 @@ public class TaskStateFragmentPresenterImp extends AbstractPresenter<TaskStateFr
     if(view.isAvailable()) {
       if (Collections.isNullOrEmpty(dataSet)) {
         storage.all()
-          .flatMap(Observable::from)
+          .flatMap(Observable::fromIterable)
           .filter(this::accepted)
           .toList()
           .subscribeOn(Schedulers.io())

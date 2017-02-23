@@ -21,6 +21,6 @@
   <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
     <item name="colorPrimaryDark">@color/viewBackgroundColor</item>
     <item name="android:windowBackground">@color/viewBackgroundColor</item>
+    <item name="android:statusBarColor">?android:attr/colorControlActivated</item>
   </style>
-
 </resources>
