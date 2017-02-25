@@ -20,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import dagger.Module;
 import dagger.Provides;
+import org.fs.todo.commons.ToDoStorage;
 import org.fs.todo.commons.scopes.PerFragment;
 import org.fs.todo.presenters.TaskStateFragmentPresenter;
 import org.fs.todo.presenters.TaskStateFragmentPresenterImp;
@@ -34,8 +35,8 @@ import org.fs.todo.views.adapters.ToDoAdapter;
     this.view = view;
   }
 
-  @PerFragment @Provides public TaskStateFragmentPresenter providePresenter() {
-    return new TaskStateFragmentPresenterImp(view);
+  @PerFragment @Provides public TaskStateFragmentPresenter providePresenter(ToDoStorage storage) {
+    return new TaskStateFragmentPresenterImp(view, storage);
   }
 
   @PerFragment @Provides public RecyclerView.LayoutManager provideLayoutManager() {

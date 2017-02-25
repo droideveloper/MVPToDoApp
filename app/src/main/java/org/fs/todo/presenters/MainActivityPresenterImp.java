@@ -25,14 +25,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.Date;
-import javax.inject.Inject;
 import org.fs.common.AbstractPresenter;
 import org.fs.common.BusManager;
 import org.fs.todo.BuildConfig;
 import org.fs.todo.commons.SimpleTextWatcher;
 import org.fs.todo.commons.ToDoStorage;
-import org.fs.todo.commons.components.DaggerPresenterComponent;
-import org.fs.todo.commons.modules.PresenterModule;
 import org.fs.todo.entities.Option;
 import org.fs.todo.entities.Task;
 import org.fs.todo.entities.TaskState;
@@ -47,22 +44,19 @@ import org.fs.util.StringUtility;
 public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView>
     implements MainActivityPresenter {
 
-  @Inject StateToDoAdapter todoAdapter;
-  @Inject ToDoStorage storage;
+  StateToDoAdapter todoAdapter;
+  ToDoStorage storage;
 
-  private Disposable register;
+  Disposable register;
 
-  public MainActivityPresenterImp(MainActivityView view) {
+  public MainActivityPresenterImp(MainActivityView view, StateToDoAdapter todoAdapter, ToDoStorage storage) {
     super(view);
+    this.todoAdapter = todoAdapter;
+    this.storage = storage;
   }
 
   @Override public void onCreate() {
     view.setUp();
-    DaggerPresenterComponent.builder()
-        .appComponent(view.provideAppComponent())
-        .presenterModule(new PresenterModule(view.provideFragmentManager()))
-        .build()
-        .inject(this);
   }
 
   @Override public void onStart() {

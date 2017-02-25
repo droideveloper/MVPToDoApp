@@ -21,7 +21,7 @@ import org.fs.todo.commons.scopes.PerFragment;
 import org.fs.todo.views.TaskStateFragment;
 
 @PerFragment
-@Component(modules = FragmentModule.class)
+@Component(modules = FragmentModule.class, dependencies = AppComponent.class)
 public interface FragmentComponent {
   void inject(TaskStateFragment fragment);
 }

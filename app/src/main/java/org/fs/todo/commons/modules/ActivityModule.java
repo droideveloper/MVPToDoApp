@@ -15,12 +15,17 @@
  */
 package org.fs.todo.commons.modules;
 
+import android.support.v4.util.Pair;
 import dagger.Module;
 import dagger.Provides;
+import java.util.Arrays;
+import org.fs.todo.commons.ToDoStorage;
 import org.fs.todo.commons.scopes.PerActivity;
+import org.fs.todo.entities.DisplayOptions;
 import org.fs.todo.presenters.MainActivityPresenter;
 import org.fs.todo.presenters.MainActivityPresenterImp;
 import org.fs.todo.views.MainActivityView;
+import org.fs.todo.views.adapters.StateToDoAdapter;
 
 @Module public class ActivityModule {
 
@@ -30,7 +35,15 @@ import org.fs.todo.views.MainActivityView;
     this.view = view;
   }
 
-  @PerActivity @Provides MainActivityPresenter providePresenter() {
-    return new MainActivityPresenterImp(this.view);
+  @PerActivity @Provides MainActivityPresenter providePresenter(StateToDoAdapter todoAdapter, ToDoStorage storage) {
+    return new MainActivityPresenterImp(this.view, todoAdapter, storage);
+  }
+
+  @Provides public StateToDoAdapter provideStateAdapter() {
+    return new StateToDoAdapter(view.provideFragmentManager(),
+        Arrays.asList(
+            new Pair<>(DisplayOptions.ALL, "ALL"),
+            new Pair<>(DisplayOptions.ACTIVE, "ACTIVE"),
+            new Pair<>(DisplayOptions.INACTIVE, "INACTIVE")));
   }
 }

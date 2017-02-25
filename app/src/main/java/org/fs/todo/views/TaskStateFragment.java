@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,6 +71,7 @@ public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresent
   @Override public void onActivityCreated(Bundle restoreState) {
     super.onActivityCreated(restoreState);
     DaggerFragmentComponent.builder()
+        .appComponent(dependency())
         .fragmentModule(new FragmentModule(this))
         .build()
         .inject(this);
@@ -155,5 +157,14 @@ public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresent
 
   private View view() {
     return viewReference != null ? viewReference.get() : null;
+  }
+
+  private AppComponent dependency() {
+    FragmentActivity activity = getActivity();
+    if (activity != null) {
+      ToDoApplication application = (ToDoApplication) activity.getApplication();
+      return application.provideAppComponent();
+    }
+    return null;
   }
 }

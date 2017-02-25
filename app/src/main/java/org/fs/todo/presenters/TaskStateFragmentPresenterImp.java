@@ -20,13 +20,10 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import javax.inject.Inject;
 import org.fs.common.AbstractPresenter;
 import org.fs.common.BusManager;
 import org.fs.todo.BuildConfig;
 import org.fs.todo.commons.ToDoStorage;
-import org.fs.todo.commons.components.DaggerPresenterComponent;
-import org.fs.todo.commons.modules.PresenterModule;
 import org.fs.todo.entities.DisplayOptions;
 import org.fs.todo.entities.Option;
 import org.fs.todo.entities.Task;
@@ -42,24 +39,23 @@ public class TaskStateFragmentPresenterImp extends AbstractPresenter<TaskStateFr
   public final static String KEY_DATA_SET = "key.task.array";
   public final static String KEY_OPTIONS  = "key.display.option";
 
-  @Inject ToDoStorage storage;
+  ToDoStorage storage;
 
-  private ObservableList<Task> dataSet;
-  private int                  displayOption;
-  private Disposable           register;
+  // These variables are package level accessible because of that
+  // we can call these variables inside this package and wont cause me add more instructions etc..
+  // deep level of compiler understanding this is.
+  ObservableList<Task> dataSet;
+  int                  displayOption;
+  Disposable           register;
 
-  public TaskStateFragmentPresenterImp(TaskStateFragmentView view) {
+  public TaskStateFragmentPresenterImp(TaskStateFragmentView view, ToDoStorage storage) {
     super(view);
     this.dataSet = new ObservableList<>();
+    this.storage = storage;
   }
 
   @Override public void onCreate() {
     view.setUp();
-    DaggerPresenterComponent.builder()
-      .appComponent(view.provideAppComponent())
-      .presenterModule(new PresenterModule(null))
-      .build()
-      .inject(this);
   }
 
   @Override public void restoreState(Bundle restoreState) {
