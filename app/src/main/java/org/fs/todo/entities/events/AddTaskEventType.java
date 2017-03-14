@@ -15,12 +15,12 @@
  */
 package org.fs.todo.entities.events;
 
-import org.fs.common.IEvent;
+import org.fs.common.EventType;
 
-public final class AddTaskEvent implements IEvent {
+public final class AddTaskEventType implements EventType {
   private final String text;
 
-  public AddTaskEvent(final String text) {
+  public AddTaskEventType(final String text) {
     this.text = text;
   }
 

@@ -28,8 +28,8 @@ import org.fs.todo.BuildConfig;
 import org.fs.todo.R;
 import org.fs.todo.entities.Task;
 import org.fs.todo.entities.TaskState;
-import org.fs.todo.entities.events.ChangeTaskEvent;
-import org.fs.todo.entities.events.RemoveTaskEvent;
+import org.fs.todo.entities.events.ChangeTaskEventType;
+import org.fs.todo.entities.events.RemoveTaskEventType;
 
 import static org.fs.util.ViewUtility.findViewById;
 
@@ -83,8 +83,8 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
     }
     checkbox.setOnClickListener((v) -> {
       TaskState state = this.data.getState() == TaskState.INACTIVE ? TaskState.ACTIVE : TaskState.INACTIVE;
-      BusManager.send(new ChangeTaskEvent(this.data.newBuilder().state(state).build()));
+      BusManager.send(new ChangeTaskEventType(this.data.newBuilder().state(state).build()));
     });
-    close.setOnClickListener((v) -> BusManager.send(new RemoveTaskEvent(data)));
+    close.setOnClickListener((v) -> BusManager.send(new RemoveTaskEventType(data)));
   }
 }

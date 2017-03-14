@@ -15,32 +15,20 @@
  */
 package org.fs.todo;
 
-import org.fs.core.AbstractApplication;
+import android.app.Application;
 import org.fs.todo.commons.components.AppComponent;
 import org.fs.todo.commons.components.DaggerAppComponent;
 import org.fs.todo.commons.modules.AppModule;
 
-public class ToDoApplication extends AbstractApplication {
+public class ToDoApplication extends Application {
 
   private AppComponent appComponent;
-
-  public ToDoApplication() {
-    super(BuildConfig.DEBUG);
-  }
 
   @Override public void onCreate() {
     super.onCreate();
     appComponent = DaggerAppComponent.builder()
         .appModule(new AppModule(this))
         .build();
-  }
-
-  @Override protected String getClassTag() {
-    return ToDoApplication.class.getSimpleName();
-  }
-
-  @Override protected boolean isLogEnabled() {
-    return BuildConfig.DEBUG;
   }
 
   public AppComponent provideAppComponent() {

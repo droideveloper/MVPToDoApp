@@ -33,10 +33,10 @@ import org.fs.todo.commons.ToDoStorage;
 import org.fs.todo.entities.Option;
 import org.fs.todo.entities.Task;
 import org.fs.todo.entities.TaskState;
-import org.fs.todo.entities.events.AddTaskEvent;
-import org.fs.todo.entities.events.ChangeTaskEvent;
-import org.fs.todo.entities.events.DisplayEvent;
-import org.fs.todo.entities.events.RemoveTaskEvent;
+import org.fs.todo.entities.events.AddTaskEventType;
+import org.fs.todo.entities.events.ChangeTaskEventType;
+import org.fs.todo.entities.events.DisplayEventType;
+import org.fs.todo.entities.events.RemoveTaskEventType;
 import org.fs.todo.views.MainActivityView;
 import org.fs.todo.views.adapters.StateToDoAdapter;
 import org.fs.util.StringUtility;
@@ -64,8 +64,8 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
       view.setStateAdapter(todoAdapter);
     }
     register = BusManager.add((e) -> {
-      if (e instanceof AddTaskEvent) {
-        AddTaskEvent event = (AddTaskEvent) e;
+      if (e instanceof AddTaskEventType) {
+        AddTaskEventType event = (AddTaskEventType) e;
         Task task = new Task.Builder()
           .updatedAt(new Date())
           .createdAt(new Date())
@@ -78,29 +78,29 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(created -> {
             if (created) {
-              BusManager.send(new DisplayEvent(task, Option.ADD));
+              BusManager.send(new DisplayEventType(task, Option.ADD));
             }
           }, this::log);
-      } else if (e instanceof RemoveTaskEvent) {
-        RemoveTaskEvent event = (RemoveTaskEvent) e;
+      } else if (e instanceof RemoveTaskEventType) {
+        RemoveTaskEventType event = (RemoveTaskEventType) e;
 
         storage.delete(event.task())
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(deleted -> {
             if (deleted) {
-              BusManager.send(new DisplayEvent(event.task(), Option.REMOVE));
+              BusManager.send(new DisplayEventType(event.task(), Option.REMOVE));
             }
           }, this::log);
-      } else if (e instanceof ChangeTaskEvent) {
-        ChangeTaskEvent event = (ChangeTaskEvent) e;
+      } else if (e instanceof ChangeTaskEventType) {
+        ChangeTaskEventType event = (ChangeTaskEventType) e;
 
         storage.update(event.task())
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(updated -> {
             if (updated) {
-              BusManager.send(new DisplayEvent(event.task(), Option.CHANGE));
+              BusManager.send(new DisplayEventType(event.task(), Option.CHANGE));
             }
           }, this::log);
       }
@@ -132,7 +132,7 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
         if (view.isAvailable()) {
           String str = textView.getText().toString();
           if (!StringUtility.isNullOrEmpty(str)) {
-            BusManager.send(new AddTaskEvent(str));
+            BusManager.send(new AddTaskEventType(str));
             textView.setText(null);
           }
         }

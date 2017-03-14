@@ -28,7 +28,7 @@ import org.fs.todo.entities.DisplayOptions;
 import org.fs.todo.entities.Option;
 import org.fs.todo.entities.Task;
 import org.fs.todo.entities.TaskState;
-import org.fs.todo.entities.events.DisplayEvent;
+import org.fs.todo.entities.events.DisplayEventType;
 import org.fs.todo.views.TaskStateFragmentView;
 import org.fs.util.Collections;
 import org.fs.util.ObservableList;
@@ -92,8 +92,8 @@ public class TaskStateFragmentPresenterImp extends AbstractPresenter<TaskStateFr
       }
       // register added
       register = BusManager.add((evt) -> {
-        if(evt instanceof DisplayEvent) {
-          DisplayEvent event = (DisplayEvent) evt;
+        if(evt instanceof DisplayEventType) {
+          DisplayEventType event = (DisplayEventType) evt;
           if(view.isAvailable()) {
             if(event.option() == Option.ADD) {
               dataSet.add(event.task());

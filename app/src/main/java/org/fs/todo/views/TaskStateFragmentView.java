@@ -15,10 +15,10 @@
  */
 package org.fs.todo.views;
 
-import org.fs.common.IView;
+import org.fs.common.ViewType;
 import org.fs.todo.commons.components.AppComponent;
 
-public interface TaskStateFragmentView extends IView {
+public interface TaskStateFragmentView extends ViewType {
 
   void setUp();
   AppComponent provideAppComponent();

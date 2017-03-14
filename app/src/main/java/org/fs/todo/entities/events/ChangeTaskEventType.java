@@ -15,14 +15,14 @@
  */
 package org.fs.todo.entities.events;
 
-import org.fs.common.IEvent;
+import org.fs.common.EventType;
 import org.fs.todo.entities.Task;
 
-public final class ChangeTaskEvent implements IEvent {
+public final class ChangeTaskEventType implements EventType {
 
   private final Task task;
 
-  public ChangeTaskEvent(final Task task) {
+  public ChangeTaskEventType(final Task task) {
     this.task = task;
   }
 

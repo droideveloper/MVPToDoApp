@@ -16,11 +16,11 @@
 package org.fs.todo.views;
 
 import android.support.v4.app.FragmentManager;
-import org.fs.common.IView;
+import org.fs.common.ViewType;
 import org.fs.todo.commons.components.AppComponent;
 import org.fs.todo.views.adapters.StateToDoAdapter;
 
-public interface MainActivityView extends IView {
+public interface MainActivityView extends ViewType {
   void showProgress();
   void hideProgress();
 

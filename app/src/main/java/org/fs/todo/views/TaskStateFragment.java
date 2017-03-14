@@ -49,8 +49,6 @@ public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresent
   @Inject RecyclerView.ItemAnimator itemAnimator;
   @Inject ToDoAdapter todoAdapter;
 
-  private WeakReference<View> viewReference;
-
   public static TaskStateFragment newInstance(final int displayOption) {
     Bundle args = new Bundle();
     args.putInt(TaskStateFragmentPresenterImp.KEY_OPTIONS, displayOption);
@@ -64,7 +62,6 @@ public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresent
   public View onCreateView(LayoutInflater factory, ViewGroup parent, Bundle restoreState) {
     final View view = factory.inflate(R.layout.view_task_state_fragment, parent, false);
     recycler = ViewUtility.findViewById(view, R.id.recycler);
-    viewReference = new WeakReference<>(view);
     return view;
   }
 
@@ -101,32 +98,6 @@ public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresent
     super.onStop();
   }
 
-  @Override public void showError(String errorString) {
-    final View view = view();
-    if (view != null) {
-      Snackbar.make(view, errorString, Snackbar.LENGTH_LONG).show();
-    }
-  }
-
-  @Override public void showError(String errorString, String actionTextString,
-      View.OnClickListener callback) {
-    final View view = view();
-    if (view != null) {
-      final Snackbar snackbar = Snackbar.make(view, errorString, Snackbar.LENGTH_LONG);
-      snackbar.setAction(actionTextString, v -> {
-        if (callback != null) {
-          callback.onClick(v);
-        }
-        snackbar.dismiss();
-      });
-      snackbar.show();
-    }
-  }
-
-  @Override public String getStringResource(@StringRes int stringId) {
-    return getActivity().getString(stringId);
-  }
-
   @Override public AppComponent provideAppComponent() {
     ToDoApplication app = (ToDoApplication) getActivity().getApplication();
     if(app != null) {
@@ -135,28 +106,12 @@ public class TaskStateFragment extends AbstractFragment<TaskStateFragmentPresent
     return null;
   }
 
-  @Override public Context getContext() {
-    return getActivity();
-  }
-
-  @Override public boolean isAvailable() {
-    return super.isCallingSafe();
-  }
-
-  @Override public void finish() {
-    throw new IllegalArgumentException("fragment instances does not support finish options");
-  }
-
   @Override protected boolean isLogEnabled() {
     return BuildConfig.DEBUG;
   }
 
   @Override protected String getClassTag() {
     return TaskStateFragment.class.getSimpleName();
-  }
-
-  private View view() {
-    return viewReference != null ? viewReference.get() : null;
   }
 
   private AppComponent dependency() {

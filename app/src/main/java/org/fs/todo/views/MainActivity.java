@@ -15,10 +15,7 @@
  */
 package org.fs.todo.views;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -85,28 +82,6 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
     super.onStop();
   }
 
-  @Override public void showError(String errorString) {
-    final View view = view();
-    if (view != null) {
-      Snackbar.make(view, errorString, Snackbar.LENGTH_LONG).show();
-    }
-  }
-
-  @Override public void showError(String errorString, String actionTextString,
-      View.OnClickListener callback) {
-    final View view = view();
-    if (view != null) {
-      final Snackbar snackbar = Snackbar.make(view, errorString, Snackbar.LENGTH_LONG);
-      snackbar.setAction(actionTextString, v -> {
-        if (callback != null) {
-          callback.onClick(v);
-        }
-        snackbar.dismiss();
-      });
-      snackbar.show();
-    }
-  }
-
   @Override public void showProgress() {
     progress.setVisibility(View.VISIBLE);
     progress.setIndeterminate(true);
@@ -117,11 +92,6 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
     progress.setVisibility(View.INVISIBLE);
   }
 
-  @Override public void finish() {
-    super.finish();
-    overridePendingTransition(R.anim.scale_in, R.anim.translate_right_out);
-  }
-
   @Override public void setStateAdapter(StateToDoAdapter stateAdapter) {
     viewPager.setAdapter(stateAdapter);
   }
@@ -130,28 +100,12 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
     return getSupportFragmentManager();
   }
 
-  @Override public String getStringResource(@StringRes int stringId) {
-    return getString(stringId);
-  }
-
-  @Override public Context getContext() {
-    return this;
-  }
-
-  @Override public boolean isAvailable() {
-    return !isFinishing();
-  }
-
   @Override protected boolean isLogEnabled() {
     return BuildConfig.DEBUG;
   }
 
   @Override protected String getClassTag() {
     return MainActivity.class.getSimpleName();
-  }
-
-  private View view() {
-    return findViewById(android.R.id.content);
   }
 
   @Override public AppComponent provideAppComponent() {

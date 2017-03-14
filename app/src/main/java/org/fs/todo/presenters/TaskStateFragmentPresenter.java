@@ -15,11 +15,11 @@
  */
 package org.fs.todo.presenters;
 
-import org.fs.common.IPresenter;
+import org.fs.common.PresenterType;
 import org.fs.todo.entities.Task;
 import org.fs.util.ObservableList;
 
-public interface TaskStateFragmentPresenter extends IPresenter {
+public interface TaskStateFragmentPresenter extends PresenterType {
 
   ObservableList<Task> provideObservableList();
 }

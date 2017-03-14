@@ -17,9 +17,9 @@ package org.fs.todo.presenters;
 
 import android.text.TextWatcher;
 import android.widget.TextView;
-import org.fs.common.IPresenter;
+import org.fs.common.PresenterType;
 
-public interface MainActivityPresenter extends IPresenter {
+public interface MainActivityPresenter extends PresenterType {
   TextWatcher provideTextWatcher();
   TextView.OnEditorActionListener provideEditorActionListener();
 }
