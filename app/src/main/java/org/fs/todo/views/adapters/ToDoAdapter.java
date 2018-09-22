@@ -15,8 +15,7 @@
  */
 package org.fs.todo.views.adapters;
 
-import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,65 +25,21 @@ import org.fs.todo.BuildConfig;
 import org.fs.todo.R;
 import org.fs.todo.entities.Task;
 import org.fs.todo.views.vh.ToDoViewHolder;
-import org.fs.util.IPropertyChangedListener;
 import org.fs.util.ObservableList;
 
-public class ToDoAdapter extends AbstractRecyclerAdapter<Task, ToDoViewHolder>  implements
-    IPropertyChangedListener{
+public class ToDoAdapter extends AbstractRecyclerAdapter<Task, ToDoViewHolder> {
 
-  @Override public void notifyItemsRemoved(int index, int size) {
-    if(size == 1) {
-      notifyItemRemoved(index);
-    } else {
-      notifyItemRangeRemoved(index, size);
-    }
+  public ToDoAdapter(ObservableList<Task> dataSet) {
+    super(dataSet);
   }
 
-  @Override public void notifyItemsInserted(int index, int size) {
-    if(size == 1) {
-      notifyItemInserted(index);
-    } else {
-      notifyItemRangeInserted(index, size);
-    }
-  }
-
-  @Override public void notifyItemsChanged(int index, int size) {
-    if(size == 1) {
-      notifyItemChanged(index);
-    } else {
-      notifyItemRangeChanged(index, size);
-    }
-  }
-
-  public ToDoAdapter(ObservableList<Task> dataSet, Context context) {
-    super(dataSet, context);
-    dataSet.registerPropertyChangedListener(this);
-  }
-
-  @Override public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-    super.onDetachedFromRecyclerView(recyclerView);
-    if (dataSet instanceof ObservableList<?>) {
-      ObservableList<?> observer = (ObservableList<?>) dataSet;
-      observer.unregisterPropertyChangedListener(this);
-    }
-  }
-
-  @Override public ToDoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    final LayoutInflater factory = inflaterFactory();
+  @Override public ToDoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    final LayoutInflater factory = LayoutInflater.from(parent.getContext());
     if(factory != null) {
       final View view = factory.inflate(R.layout.view_task_item, parent, false);
       return new ToDoViewHolder(view);
     }
     throw new AndroidException("Context is dead, no layoutInflater for death context");
-  }
-
-  @Override public void onBindViewHolder(ToDoViewHolder holder, int position) {
-    final Task task = getItemAtIndex(position);
-    holder.onBindView(task);
-  }
-
-  @Override public int getItemViewType(int position) {
-    return 0;
   }
 
   @Override protected String getClassTag() {

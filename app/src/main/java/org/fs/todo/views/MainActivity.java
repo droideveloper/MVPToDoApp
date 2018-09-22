@@ -29,15 +29,13 @@ import org.fs.todo.BuildConfig;
 import org.fs.todo.R;
 import org.fs.todo.ToDoApplication;
 import org.fs.todo.commons.components.AppComponent;
-import org.fs.todo.commons.components.DaggerActivityComponent;
-import org.fs.todo.commons.modules.ActivityModule;
 import org.fs.todo.presenters.MainActivityPresenter;
 import org.fs.todo.views.adapters.StateToDoAdapter;
 
 public class MainActivity extends AbstractActivity<MainActivityPresenter>
     implements MainActivityView {
 
-  @Inject MainActivityPresenter presenter;
+  @Inject StateToDoAdapter stateToDoAdapter;
 
   @BindView(R.id.editText) EditText editText;
   @BindView(R.id.viewPager) ViewPager viewPager;
@@ -47,12 +45,6 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
     super.onCreate(restoreState);
     setContentView(R.layout.view_main_activity);
     ButterKnife.bind(this);
-    //inject it this way
-    DaggerActivityComponent.builder()
-        .appComponent(provideAppComponent())
-        .activityModule(new ActivityModule(this))
-        .build()
-        .inject(this);
 
     presenter.restoreState(restoreState != null ? restoreState : getIntent().getExtras());
     presenter.onCreate();
@@ -61,25 +53,11 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
   @Override public void setUp() {
     editText.addTextChangedListener(presenter.provideTextWatcher());
     editText.setOnEditorActionListener(presenter.provideEditorActionListener());
+    viewPager.setAdapter(stateToDoAdapter);
   }
 
   @Override public void setTextStyle(int textStyle) {
     editText.setTypeface(null, textStyle);
-  }
-
-  @Override public void onSaveInstanceState(Bundle storeState) {
-    super.onSaveInstanceState(storeState);
-    presenter.storeState(storeState);
-  }
-
-  @Override public void onStart() {
-    super.onStart();
-    presenter.onStart();
-  }
-
-  @Override public void onStop() {
-    presenter.onStop();
-    super.onStop();
   }
 
   @Override public void showProgress() {
@@ -90,10 +68,6 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
   @Override public void hideProgress() {
     progress.setIndeterminate(false);
     progress.setVisibility(View.INVISIBLE);
-  }
-
-  @Override public void setStateAdapter(StateToDoAdapter stateAdapter) {
-    viewPager.setAdapter(stateAdapter);
   }
 
   @Override public FragmentManager provideFragmentManager() {

@@ -30,6 +30,11 @@ android {
 
 dependencies {
   implementation "com.android.support:appcompat-v7:$SUPPORT_VERSION"
+  implementation "com.android.support:recyclerview-v7:$SUPPORT_VERSION"
+
+  implementation "io.reactivex.rxjava2:rxandroid:$REACTIVE_ANDROID"
+  implementation "io.reactivex.rxjava2:rxjava:$REACTIVE_JAVA"
+
   implementation("net.sourceforge.streamsupport:streamsupport:1.5.1") {
     exclude group: "acom.android.support", module: "*"
   }

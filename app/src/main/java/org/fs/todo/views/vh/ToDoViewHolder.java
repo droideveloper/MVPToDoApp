@@ -59,7 +59,13 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
     return BuildConfig.DEBUG;
   }
 
-  @Override public final void onBindView(Task data) {
+  @Override public void unbind() {
+    /*
+     * no opt
+     */
+  }
+
+  @Override public final void bind(Task data) {
     this.data = data;
     switch (data.getState()) {
       case ACTIVE: {
@@ -81,10 +87,12 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
         break;
       }
     }
-    checkbox.setOnClickListener((v) -> {
+    checkbox.setOnClickListener(v -> {
       TaskState state = this.data.getState() == TaskState.INACTIVE ? TaskState.ACTIVE : TaskState.INACTIVE;
       BusManager.send(new ChangeTaskEventType(this.data.newBuilder().state(state).build()));
     });
     close.setOnClickListener((v) -> BusManager.send(new RemoveTaskEventType(data)));
   }
+
+
 }
