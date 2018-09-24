@@ -45,9 +45,6 @@ dependencies {
   annotationProcessor "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
   annotationProcessor "com.google.dagger:dagger-android-processor:$DAGGER_VERSION"
 
-  implementation "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
-  annotationProcessor "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
-
   api project(':mvp')
   implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 

@@ -49,8 +49,7 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
 
   private final CompositeDisposable disposeBag = new CompositeDisposable();
 
-  @Inject
-  public MainActivityPresenterImp(MainActivityView view, TaskRepository taskRepository) {
+  @Inject MainActivityPresenterImp(MainActivityView view, TaskRepository taskRepository) {
     super(view);
     this.taskRepository = taskRepository;
   }

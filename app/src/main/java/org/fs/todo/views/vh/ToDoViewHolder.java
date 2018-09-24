@@ -24,9 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import org.fs.common.BusManager;
 import org.fs.core.AbstractRecyclerViewHolder;
 import org.fs.todo.BuildConfig;
@@ -36,27 +33,26 @@ import org.fs.todo.entities.TaskState;
 import org.fs.todo.entities.events.ChangeTaskEvent;
 import org.fs.todo.entities.events.RemoveTaskEvent;
 
-import static org.fs.todo.entities.DisplayOptions.*;
-
 public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
 
-  @BindView(R.id.viewTextTitle) TextView viewTextTile;
-  @BindView(R.id.viewClose) View viewClose;
-  @BindView(R.id.viewCheckBox) RadioButton viewCheckBox;
+  private TextView viewTextTile;
+  private View viewClose;
+  private RadioButton viewCheckBox;
 
   private int strikeColor = Color.parseColor("#D9D9D9");
   private int defaultColor = Color.parseColor("#4D4D4D");
 
   public ToDoViewHolder(ViewGroup parent) {
-    super(LayoutInflater.from(parent.getContext())
+    this(LayoutInflater.from(parent.getContext())
        .inflate(R.layout.view_task_item, parent, false));
   }
 
-  private Unbinder unbinder;
 
-  public ToDoViewHolder(View view) {
+  private ToDoViewHolder(View view) {
     super(view);
-    unbinder = ButterKnife.bind(view);
+    viewTextTile = view.findViewById(R.id.viewTextTitle);
+    viewCheckBox = view.findViewById(R.id.viewCheckBox);
+    viewClose = view.findViewById(R.id.viewClose);
   }
 
   @Override protected String getClassTag() {
@@ -68,9 +64,7 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
   }
 
   @Override public void unbind() {
-    if (unbinder != null) {
-      unbinder.unbind();
-    }
+    /*no-opt*/
   }
 
   @Override public final void bind(Task entity) {

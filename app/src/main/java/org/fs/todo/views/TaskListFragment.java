@@ -18,15 +18,12 @@ package org.fs.todo.views;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import javax.inject.Inject;
 import org.fs.core.AbstractFragment;
 import org.fs.todo.BuildConfig;
@@ -40,11 +37,10 @@ public class TaskListFragment extends AbstractFragment<TaskListFragmentPresenter
 
   private final static int RECYCLER_CACHE_SIZE = 10;
 
-  @BindView(R.id.viewRecycler) RecyclerView viewRecycler;
+  private RecyclerView viewRecycler;
+  private SwipeRefreshLayout viewSwipeRefreshingLayout;
 
   @Inject ToDoAdapter todoAdapter;
-
-  private Unbinder unbinder;
 
   public static TaskListFragment newInstance(final int displayOption) {
     Bundle args = new Bundle();
@@ -57,8 +53,9 @@ public class TaskListFragment extends AbstractFragment<TaskListFragmentPresenter
 
   @Nullable @Override
   public View onCreateView(@NonNull LayoutInflater factory, ViewGroup parent, Bundle restoreState) {
-    final View view = factory.inflate(R.layout.view_task_state_fragment, parent, false);
-    unbinder = ButterKnife.bind(view);
+    final View view = factory.inflate(R.layout.view_task_list_fragment, parent, false);
+    viewRecycler = view.findViewById(R.id.viewRecycler);
+    viewSwipeRefreshingLayout = view.findViewById(R.id.viewSwipeRefreshLayout);
     return view;
   }
 
@@ -70,17 +67,19 @@ public class TaskListFragment extends AbstractFragment<TaskListFragmentPresenter
   }
 
   @Override public void setUp() {
+    viewSwipeRefreshingLayout.setOnRefreshListener(presenter.provideRefreshListener()); // was provided from presenter
     viewRecycler.setHasFixedSize(true);
     viewRecycler.setItemViewCacheSize(RECYCLER_CACHE_SIZE);
     viewRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
     viewRecycler.setAdapter(todoAdapter);
   }
 
-  @Override public void onDestroy() {
-    if (unbinder != null) {
-      unbinder.unbind();
-    }
-    super.onDestroy();
+  @Override public void showProgress() {
+    viewSwipeRefreshingLayout.setRefreshing(true);
+  }
+
+  @Override public void hideProgress() {
+    viewSwipeRefreshingLayout.setRefreshing(false);
   }
 
   @Override protected boolean isLogEnabled() {

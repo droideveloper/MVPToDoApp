@@ -22,8 +22,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import javax.inject.Inject;
 import org.fs.core.AbstractActivity;
 import org.fs.todo.BuildConfig;
@@ -36,15 +34,17 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
 
   @Inject StateToDoAdapter stateToDoAdapter;
 
-  @BindView(R.id.viewEditText) EditText viewEditText;
-  @BindView(R.id.viewPager) ViewPager viewPager;
-  @BindView(R.id.viewProgress) ProgressBar viewProgress;
-  @BindView(R.id.viewToggle) ImageView viewToggle;
+  private EditText viewEditText;
+  private ViewPager viewPager;
+  private ProgressBar viewProgress;
 
   @Override public void onCreate(Bundle restoreState) {
     super.onCreate(restoreState);
     setContentView(R.layout.view_main_activity);
-    ButterKnife.bind(this);
+
+    viewEditText = findViewById(R.id.viewEditText);
+    viewPager = findViewById(R.id.viewPager);
+    viewProgress = findViewById(R.id.viewProgress);
 
     presenter.restoreState(restoreState != null ? restoreState : getIntent().getExtras());
     presenter.onCreate();
@@ -67,7 +67,7 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
 
   @Override public void hideProgress() {
     viewProgress.setIndeterminate(false);
-    viewProgress.setVisibility(View.INVISIBLE);
+    viewProgress.setVisibility(View.GONE);
   }
 
   @Override public FragmentManager provideSupportFragmentManager() {

@@ -16,9 +16,12 @@
 package org.fs.todo.presenters;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import java.util.List;
+import java.util.Locale;
 import javax.inject.Inject;
 import org.fs.common.AbstractPresenter;
 import org.fs.common.BusManager;
@@ -48,8 +51,9 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
   private int displayOption;
 
   private final CompositeDisposable disposeBag = new CompositeDisposable();
+  private Disposable loadDataDisposable;
 
-  @Inject public TaskListFragmentPresenterImp(TaskListFragmentView view, ObservableList<Task> dataSet, TaskRepository taskRepository) {
+  @Inject TaskListFragmentPresenterImp(TaskListFragmentView view, ObservableList<Task> dataSet, TaskRepository taskRepository) {
     super(view);
     this.dataSet = dataSet;
     this.taskRepository = taskRepository;
@@ -82,7 +86,7 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
   }
 
   @Override public void onStart() {
-    if(view.isAvailable()) {
+    if (view.isAvailable()) {
       // bus manager disposable
       final Disposable busManagerDisposable = BusManager.add((e) -> {
         if (e instanceof DisplayEvent) {
@@ -129,57 +133,41 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
   private void optionChange(Task task) {
     final int index = dataSet.indexOf(task::equals);
     if (displayOption == DisplayOptions.ALL) {
-      if (index != -1) {
-        dataSet.set(index, task);
-      }
+      changeForAllDisplayOptions(task, index);
     } else if (displayOption == DisplayOptions.ACTIVE) {
-      if (task.getTaskState() == TaskState.ACTIVE) {
-        if (index == -1) {
-          dataSet.add(task);
-        }
-      } else if (task.getTaskState() == TaskState.INACTIVE) {
-        if (index != -1) {
-          dataSet.remove(index);
-        }
-      }
+      changeForActiveDisplayOptions(task, index);
     } else if (displayOption == DisplayOptions.INACTIVE) {
-      if (task.getTaskState() == TaskState.ACTIVE) {
-        if (index != -1) {
-          dataSet.remove(index);
-        }
-      } else if (task.getTaskState() == TaskState.INACTIVE) {
-        if (index == -1) {
-          dataSet.add(task);
-        }
-      }
+      changeForInactiveDisplayOptions(task, index);
     }
   }
 
   private void checkIfInitialLoadNeeded() {
-    if (!Collections.isNullOrEmpty(dataSet)) {
+    if (Collections.isNullOrEmpty(dataSet)) {
       load();
     }
   }
 
   private void load() {
+    if (!dataSet.isEmpty()) { // data set is not empty
+      dataSet.clear(); // initial state clear
+    }
     final int state = taskStateForDisplayOption();
-    final Disposable loadDataDisposable = taskRepository.queryByTaskState(state)
+    loadDataDisposable = (state == -1 ? taskRepository.queryAll() : taskRepository.queryByTaskState(state))
       .compose(RxUtility.toAsyncFlowable(view))
       .subscribe(data -> {
         if (view.isAvailable()) {
           if (!Collections.isNullOrEmpty(data)) {
             dataSet.addAll(data);
           }
-
         }
+        loadDataDisposable.dispose(); // if you do not clear data set you will be fucked
       }, error -> {
         if (view.isAvailable()) {
           view.showError(error.getLocalizedMessage());
         }
-        log(error);
+        log(error); // log error
+        loadDataDisposable.dispose(); // if you do not clear data set you will be fucked, since their change impl calls here all the time we need to focus on something new
       });
-    // add bag
-    disposeBag.add(loadDataDisposable);
   }
 
   private int taskStateForDisplayOption() {
@@ -189,9 +177,45 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
       case DisplayOptions.INACTIVE:
         return TaskState.of(TaskState.INACTIVE);
       case DisplayOptions.ALL:
-        return TaskState.of(TaskState.COMPLETED);
       default:
         return -1;
     }
+  }
+
+  private void changeForActiveDisplayOptions(Task task, int index) {
+    if (task.getTaskState() == TaskState.ACTIVE) { // new tasks state is active and not in the current list
+      if (index == -1) {
+        dataSet.add(task);
+      }
+    } else if (task.getTaskState() == TaskState.INACTIVE) { // task state is changed so remote it from active
+      if (index != -1) {
+        dataSet.remove(index);
+      }
+    }
+    log(Log.ERROR, String.format(Locale.US, "collection size for displayType %d with amount of %d", displayOption, dataSet.size()));
+  }
+
+  private void changeForInactiveDisplayOptions(Task task, int index) {
+    if (task.getTaskState() == TaskState.ACTIVE) { // task state is changed so remove it from inactive
+      if (index != -1) {
+        dataSet.remove(index);
+      }
+    } else if (task.getTaskState() == TaskState.INACTIVE) { // new task state is inactive and not in the current list
+      if (index == -1) {
+        dataSet.add(task);
+      }
+    }
+    log(Log.ERROR, String.format(Locale.US, "collection size for displayType %d with amount of %d", displayOption, dataSet.size()));
+  }
+
+  private void changeForAllDisplayOptions(Task task, int index) {
+    if (index != -1) {
+      dataSet.set(index, task);
+    }
+    log(Log.ERROR, String.format(Locale.US, "collection size for displayType %d with amount of %d", displayOption, dataSet.size()));
+  }
+
+  @Override public SwipeRefreshLayout.OnRefreshListener provideRefreshListener() {
+    return this::load;
   }
 }

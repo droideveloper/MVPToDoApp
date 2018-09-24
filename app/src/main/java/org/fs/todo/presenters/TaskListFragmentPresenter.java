@@ -15,6 +15,9 @@
  */
 package org.fs.todo.presenters;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import org.fs.common.PresenterType;
 
-public interface TaskListFragmentPresenter extends PresenterType { }
+public interface TaskListFragmentPresenter extends PresenterType {
+  SwipeRefreshLayout.OnRefreshListener provideRefreshListener();
+}
