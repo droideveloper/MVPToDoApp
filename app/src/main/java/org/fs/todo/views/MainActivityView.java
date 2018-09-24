@@ -19,11 +19,9 @@ import android.support.v4.app.FragmentManager;
 import org.fs.common.ViewType;
 
 public interface MainActivityView extends ViewType {
-  void showProgress();
-  void hideProgress();
 
   void setUp();
   void setTextStyle(int textStyle);
 
-  FragmentManager provideFragmentManager();
+  FragmentManager provideSupportFragmentManager();
 }

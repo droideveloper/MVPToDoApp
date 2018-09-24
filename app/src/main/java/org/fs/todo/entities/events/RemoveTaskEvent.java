@@ -18,10 +18,10 @@ package org.fs.todo.entities.events;
 import org.fs.common.EventType;
 import org.fs.todo.entities.Task;
 
-public class RemoveTaskEventType implements EventType {
-  public final Task task;
+public class RemoveTaskEvent implements EventType {
+  private final Task task;
 
-  public RemoveTaskEventType(final Task task) {
+  public RemoveTaskEvent(final Task task) {
     this.task = task;
   }
 

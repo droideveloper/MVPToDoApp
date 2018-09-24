@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.views;
+package org.fs.todo.entities.events;
 
-import org.fs.common.ViewType;
-import org.fs.todo.commons.components.AppComponent;
+import org.fs.common.EventType;
 
-public interface TaskStateFragmentView extends ViewType {
+public final class AddTaskEvent implements EventType {
+  private final String text;
 
-  void setUp();
-  AppComponent provideAppComponent();
+  public AddTaskEvent(final String text) {
+    this.text = text;
+  }
+
+  public final String text() {
+    return text;
+  }
 }

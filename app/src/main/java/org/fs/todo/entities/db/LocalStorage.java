@@ -1,6 +1,6 @@
 /*
- * To-Do Copyright (C) 2017 Fatih.
- *  
+ * To-Do Copyright (C) 2018 Fatih.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo;
+package org.fs.todo.entities.db;
 
-import com.j256.ormlite.android.apptools.OrmLiteConfigUtil;
+import android.arch.persistence.room.Database;
+import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
+import org.fs.common.Converters;
 import org.fs.todo.entities.Task;
 
-public class DaoGenerator {
-
-  private static Class<?>[] classes = {
-      Task.class
-  };
-
-  public static void main(String... args) throws Exception {
-    OrmLiteConfigUtil.writeConfigFile("ormlite_config", classes);
-  }
+@TypeConverters({ Converters.class })
+@Database(entities = { Task.class }, version = 1, exportSchema = false)
+public abstract class LocalStorage extends RoomDatabase {
+  public abstract TaskDao taskDao();
 }

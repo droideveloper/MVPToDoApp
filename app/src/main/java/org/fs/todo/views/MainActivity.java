@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,8 +28,6 @@ import javax.inject.Inject;
 import org.fs.core.AbstractActivity;
 import org.fs.todo.BuildConfig;
 import org.fs.todo.R;
-import org.fs.todo.ToDoApplication;
-import org.fs.todo.commons.components.AppComponent;
 import org.fs.todo.presenters.MainActivityPresenter;
 import org.fs.todo.views.adapters.StateToDoAdapter;
 
@@ -37,9 +36,10 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
 
   @Inject StateToDoAdapter stateToDoAdapter;
 
-  @BindView(R.id.editText) EditText editText;
+  @BindView(R.id.viewEditText) EditText viewEditText;
   @BindView(R.id.viewPager) ViewPager viewPager;
-  @BindView(R.id.progress) ProgressBar progress;
+  @BindView(R.id.viewProgress) ProgressBar viewProgress;
+  @BindView(R.id.viewToggle) ImageView viewToggle;
 
   @Override public void onCreate(Bundle restoreState) {
     super.onCreate(restoreState);
@@ -51,26 +51,26 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
   }
 
   @Override public void setUp() {
-    editText.addTextChangedListener(presenter.provideTextWatcher());
-    editText.setOnEditorActionListener(presenter.provideEditorActionListener());
+    viewEditText.addTextChangedListener(presenter.provideTextWatcher());
+    viewEditText.setOnEditorActionListener(presenter.provideEditorActionListener());
     viewPager.setAdapter(stateToDoAdapter);
   }
 
   @Override public void setTextStyle(int textStyle) {
-    editText.setTypeface(null, textStyle);
+    viewEditText.setTypeface(null, textStyle);
   }
 
   @Override public void showProgress() {
-    progress.setVisibility(View.VISIBLE);
-    progress.setIndeterminate(true);
+    viewProgress.setVisibility(View.VISIBLE);
+    viewProgress.setIndeterminate(true);
   }
 
   @Override public void hideProgress() {
-    progress.setIndeterminate(false);
-    progress.setVisibility(View.INVISIBLE);
+    viewProgress.setIndeterminate(false);
+    viewProgress.setVisibility(View.INVISIBLE);
   }
 
-  @Override public FragmentManager provideFragmentManager() {
+  @Override public FragmentManager provideSupportFragmentManager() {
     return getSupportFragmentManager();
   }
 
@@ -80,13 +80,5 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
 
   @Override protected String getClassTag() {
     return MainActivity.class.getSimpleName();
-  }
-
-  @Override public AppComponent provideAppComponent() {
-    ToDoApplication app = (ToDoApplication) getApplication();
-    if (app != null) {
-      return app.provideAppComponent();
-    }
-    return null;
   }
 }

@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.commons.scopes;
+package org.fs.todo.views;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import javax.inject.Scope;
+import org.fs.common.ViewType;
 
-@Scope
-@Retention(RetentionPolicy.RUNTIME)
-public @interface PerFragment { }
+public interface TaskListFragmentView extends ViewType {
+  void setUp();
+}

@@ -1,6 +1,6 @@
 /*
- * To-Do Copyright (C) 2017 Fatih.
- *  
+ * MVP Android Copyright (C) 2018 Fatih.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,16 +15,18 @@
  */
 package org.fs.todo.commons.components;
 
-import android.content.Context;
 import dagger.Component;
+import dagger.android.AndroidInjector;
+import dagger.android.support.AndroidSupportInjectionModule;
 import javax.inject.Singleton;
-import org.fs.todo.commons.ToDoStorage;
+import org.fs.todo.ToDoApplication;
 import org.fs.todo.commons.modules.AppModule;
+import org.fs.todo.commons.modules.ProviderAppModule;
 
 @Singleton
-@Component(modules = AppModule.class)
-public interface AppComponent {
-  //might want to provide app level items such as prefManager, DbManager, FileManager, even EndpointService
-  Context context();
-  ToDoStorage storage();
+@Component(modules = { AndroidSupportInjectionModule.class, AppModule.class, ProviderAppModule.class })
+public interface AppComponent extends AndroidInjector<ToDoApplication> {
+
+  @Component.Builder
+  abstract class Builder extends AndroidInjector.Builder<ToDoApplication> { }
 }

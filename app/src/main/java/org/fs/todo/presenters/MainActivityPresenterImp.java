@@ -21,94 +21,74 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.Date;
+import javax.inject.Inject;
 import org.fs.common.AbstractPresenter;
 import org.fs.common.BusManager;
+import org.fs.common.scope.ForActivity;
 import org.fs.todo.BuildConfig;
 import org.fs.todo.commons.SimpleTextWatcher;
-import org.fs.todo.commons.ToDoStorage;
 import org.fs.todo.entities.Option;
 import org.fs.todo.entities.Task;
 import org.fs.todo.entities.TaskState;
-import org.fs.todo.entities.events.AddTaskEventType;
-import org.fs.todo.entities.events.ChangeTaskEventType;
-import org.fs.todo.entities.events.DisplayEventType;
-import org.fs.todo.entities.events.RemoveTaskEventType;
+import org.fs.todo.entities.events.AddTaskEvent;
+import org.fs.todo.entities.events.ChangeTaskEvent;
+import org.fs.todo.entities.events.DisplayEvent;
+import org.fs.todo.entities.events.RemoveTaskEvent;
+import org.fs.todo.repository.TaskRepository;
 import org.fs.todo.views.MainActivityView;
-import org.fs.todo.views.adapters.StateToDoAdapter;
+import org.fs.util.RxUtility;
 import org.fs.util.StringUtility;
 
-public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView>
-    implements MainActivityPresenter {
+@ForActivity
+public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView> implements MainActivityPresenter {
 
-  StateToDoAdapter todoAdapter;
-  ToDoStorage storage;
+  private final TaskRepository taskRepository;
 
-  Disposable register;
+  private final CompositeDisposable disposeBag = new CompositeDisposable();
 
-  public MainActivityPresenterImp(MainActivityView view, StateToDoAdapter todoAdapter, ToDoStorage storage) {
+  @Inject
+  public MainActivityPresenterImp(MainActivityView view, TaskRepository taskRepository) {
     super(view);
-    this.todoAdapter = todoAdapter;
-    this.storage = storage;
+    this.taskRepository = taskRepository;
   }
 
   @Override public void onCreate() {
-    view.setUp();
+    if (view.isAvailable()) {
+      view.setUp();
+    }
   }
 
   @Override public void onStart() {
     if(view.isAvailable()) {
-      view.setStateAdapter(todoAdapter);
+      // observe bus manager
+      final Disposable busManagerDisposable = BusManager.add((e) -> {
+        if (e instanceof AddTaskEvent) {
+          AddTaskEvent event = (AddTaskEvent) e;
+          addTask(event.text());
+        } else if (e instanceof RemoveTaskEvent) {
+          RemoveTaskEvent event = (RemoveTaskEvent) e;
+          removeTask(event.task());
+        } else if (e instanceof ChangeTaskEvent) {
+          ChangeTaskEvent event = (ChangeTaskEvent) e;
+          updateTask(event.task());
+        }
+      });
+
+      disposeBag.add(busManagerDisposable);
     }
-    register = BusManager.add((e) -> {
-      if (e instanceof AddTaskEventType) {
-        AddTaskEventType event = (AddTaskEventType) e;
-        Task task = new Task.Builder()
-          .updatedAt(new Date())
-          .createdAt(new Date())
-          .text(event.text())
-          .state(TaskState.ACTIVE)
-          .build();
-
-        storage.create(task)
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(created -> {
-            if (created) {
-              BusManager.send(new DisplayEventType(task, Option.ADD));
-            }
-          }, this::log);
-      } else if (e instanceof RemoveTaskEventType) {
-        RemoveTaskEventType event = (RemoveTaskEventType) e;
-
-        storage.delete(event.task())
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(deleted -> {
-            if (deleted) {
-              BusManager.send(new DisplayEventType(event.task(), Option.REMOVE));
-            }
-          }, this::log);
-      } else if (e instanceof ChangeTaskEventType) {
-        ChangeTaskEventType event = (ChangeTaskEventType) e;
-
-        storage.update(event.task())
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(updated -> {
-            if (updated) {
-              BusManager.send(new DisplayEventType(event.task(), Option.CHANGE));
-            }
-          }, this::log);
-      }
-    });
   }
 
   @Override public void onStop() {
-    BusManager.remove(register);
+    disposeBag.clear();
+  }
+
+  @Override public void onBackPressed() {
+    if (view.isAvailable()) {
+      view.finish();
+    }
   }
 
   @Override public TextWatcher provideTextWatcher() {
@@ -132,7 +112,7 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
         if (view.isAvailable()) {
           String str = textView.getText().toString();
           if (!StringUtility.isNullOrEmpty(str)) {
-            BusManager.send(new AddTaskEventType(str));
+            BusManager.send(new AddTaskEvent(str));
             textView.setText(null);
           }
         }
@@ -147,5 +127,51 @@ public class MainActivityPresenterImp extends AbstractPresenter<MainActivityView
 
   @Override protected boolean isLogEnabled() {
     return BuildConfig.DEBUG;
+  }
+
+  private void addTask(String text) {
+    // add those here
+    Task task = new Task.Builder()
+      .updatedAt(new Date())
+      .createdAt(new Date())
+      .text(text)
+      .state(TaskState.ACTIVE)
+      .build();
+    // do task repository
+    final Disposable addTaskDisposable = taskRepository.insert(task)
+      .compose(RxUtility.toAsyncCompletable())
+      .subscribe(() -> BusManager.send(new DisplayEvent(task, Option.ADD)), error -> {
+        if (view.isAvailable()) {
+          view.showError(error.getLocalizedMessage());
+        }
+        log(error);
+      });
+    disposeBag.add(addTaskDisposable);
+  }
+
+  private void removeTask(Task task) {
+    final Disposable removeTaskDisposable = taskRepository.delete(task)
+      .compose(RxUtility.toAsyncCompletable())
+      .subscribe(() -> BusManager.send(new DisplayEvent(task, Option.REMOVE)), error -> {
+        if (view.isAvailable()) {
+          view.showError(error.getLocalizedMessage());
+        }
+        log(error);
+      });
+    // add bag
+    disposeBag.add(removeTaskDisposable);
+  }
+
+  private void updateTask(Task task) {
+    final Disposable updateTaskDisposable = taskRepository.update(task)
+      .compose(RxUtility.toAsyncCompletable())
+      .subscribe(() -> BusManager.send(new DisplayEvent(task, Option.CHANGE)), error -> {
+        if (view.isAvailable()) {
+          view.showError(error.getLocalizedMessage());
+        }
+        log(error);
+      });
+    // add bag
+    disposeBag.add(updateTaskDisposable);
   }
 }

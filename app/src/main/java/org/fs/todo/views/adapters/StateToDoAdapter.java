@@ -23,15 +23,17 @@ import android.util.Log;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
-import java8.util.stream.Collectors;
-import java8.util.stream.StreamSupport;
+import javax.inject.Inject;
+import org.fs.common.scope.ForActivity;
 import org.fs.todo.BuildConfig;
-import org.fs.todo.views.TaskStateFragment;
+import org.fs.todo.views.TaskListFragment;
 
+@ForActivity
 public class StateToDoAdapter extends FragmentPagerAdapter {
 
   private List<Pair<Integer, String>> dataSet;
 
+  @Inject
   public StateToDoAdapter(FragmentManager fm, List<Pair<Integer, String>> dataSet) {
     super(fm);
     this.dataSet = dataSet;
@@ -39,20 +41,17 @@ public class StateToDoAdapter extends FragmentPagerAdapter {
 
   @Override public Fragment getItem(int position) {
     if(dataSet != null) {
-      return StreamSupport.stream(dataSet)
-          .map(x -> TaskStateFragment.newInstance(x.first))
-          .collect(Collectors.toList())
-          .get(position);
+      final Pair<Integer, String> item = dataSet.get(position);
+      if (item != null && item.first != null) {
+        return TaskListFragment.newInstance(item.first);
+      }
     }
     return null;
   }
 
   @Override public CharSequence getPageTitle(int position) {
     if(dataSet != null) {
-      return StreamSupport.stream(dataSet)
-          .map(x -> x.second)
-          .collect(Collectors.toList())
-          .get(position);
+      return dataSet.get(position).second;
     }
     return super.getPageTitle(position);
   }

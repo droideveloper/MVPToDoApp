@@ -16,39 +16,50 @@
  * limitations under the License.
  */
  -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:paddingBottom="10dp"
-    android:paddingTop="10dp"
-    android:background="@drawable/item_view_bottom_bg">
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:support="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="48dp"
+  android:background="@drawable/item_view_bottom_bg"
+  android:orientation="horizontal"
+  android:paddingBottom="10dp"
+  android:paddingTop="10dp">
 
   <RadioButton
-    android:id="@+id/checkbox"
+    android:id="@+id/viewCheckBox"
+    support:layout_constraintStart_toStartOf="parent"
+    support:layout_constraintTop_toTopOf="parent"
+    support:layout_constraintBottom_toBottomOf="parent"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
+    android:layout_height="0dip"
     style="@style/Widget.AppCompat.CompoundButton.RadioButton" />
 
   <TextView
-    android:id="@+id/text"
+    android:id="@+id/viewTextTitle"
+    support:layout_constraintStart_toEndOf="@+id/viewCheckBox"
+    support:layout_constraintTop_toTopOf="parent"
+    support:layout_constraintBottom_toBottomOf="parent"
+    support:layout_constraintEnd_toStartOf="@+id/viewClose"
     android:layout_width="0dp"
-    android:layout_weight="1"
-    android:layout_height="match_parent"
+    android:layout_height="0dip"
     android:layout_marginEnd="10dp"
-    android:textSize="17sp"
-    android:ellipsize="end"
-    android:maxLines="1"
     android:layout_marginStart="10dp"
+    android:layout_weight="1"
+    android:ellipsize="end"
+    android:gravity="start|center_vertical"
+    android:maxLines="1"
     android:textColor="@color/textActiveColor"
-    android:gravity="start|center_vertical" />
+    android:textSize="17sp" />
 
   <View
-    android:id="@+id/close"
-    android:layout_gravity="center_vertical"
+    android:id="@+id/viewClose"
+    support:layout_constraintTop_toTopOf="parent"
+    support:layout_constraintBottom_toBottomOf="parent"
+    support:layout_constraintEnd_toEndOf="parent"
     android:layout_width="24dp"
     android:layout_height="24dp"
-    android:background="@drawable/ic_close"  />
+    android:layout_gravity="center_vertical"
+    android:background="@drawable/ic_close" />
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

@@ -16,14 +16,21 @@
  * limitations under the License.
  */
  -->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:support="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
 
   <android.support.v7.widget.RecyclerView
-      android:id="@+id/recycler"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent" />
+    android:id="@+id/viewRecycler"
+    android:scrollbars="vertical"
+    android:scrollbarStyle="insideOverlay"
+    support:layout_constraintStart_toStartOf="parent"
+    support:layout_constraintEnd_toEndOf="parent"
+    support:layout_constraintTop_toTopOf="parent"
+    support:layout_constraintBottom_toBottomOf="parent"
+    android:layout_width="0dip"
+    android:layout_height="0dip" />
 
-</FrameLayout>
+</android.support.constraint.ConstraintLayout>

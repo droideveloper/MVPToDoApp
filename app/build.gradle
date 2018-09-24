@@ -48,6 +48,13 @@ dependencies {
   implementation "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
   annotationProcessor "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
 
-  implementation project(':mvp')
+  api project(':mvp')
   implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-}
+
+  //RxJava and RxAndroid
+  implementation "io.reactivex.rxjava2:rxandroid:$REACTIVE_ANDROID"
+  implementation "io.reactivex.rxjava2:rxjava:$REACTIVE_JAVA"
+
+  implementation "android.arch.persistence.room:rxjava2:$DATABASE_VERSION"
+  implementation "android.arch.persistence.room:runtime:$DATABASE_VERSION"
+  annotationProcessor "android.arch.persistence.room:compiler:$DATABASE_VERSION"}

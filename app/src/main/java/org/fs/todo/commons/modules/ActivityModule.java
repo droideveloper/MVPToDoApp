@@ -1,6 +1,6 @@
 /*
- * To-Do Copyright (C) 2017 Fatih.
- *  
+ * To-Do Copyright (C) 2018 Fatih.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,35 +15,24 @@
  */
 package org.fs.todo.commons.modules;
 
-import android.support.v4.util.Pair;
+import dagger.Binds;
 import dagger.Module;
-import dagger.Provides;
-import java.util.Arrays;
-import org.fs.todo.commons.ToDoStorage;
-import org.fs.todo.commons.scopes.PerActivity;
-import org.fs.todo.entities.DisplayOptions;
+import dagger.android.ContributesAndroidInjector;
+import dagger.android.FragmentKey;
+import org.fs.common.scope.ForActivity;
+import org.fs.common.scope.ForFragment;
 import org.fs.todo.presenters.MainActivityPresenter;
 import org.fs.todo.presenters.MainActivityPresenterImp;
+import org.fs.todo.views.MainActivity;
 import org.fs.todo.views.MainActivityView;
-import org.fs.todo.views.adapters.StateToDoAdapter;
+import org.fs.todo.views.TaskListFragment;
 
-@Module public class ActivityModule {
+@Module
+public abstract class ActivityModule {
 
-  private final MainActivityView view;
+  @Binds @ForActivity public abstract MainActivityView bindMainActivityView(MainActivity activity);
+  @Binds @ForActivity public abstract MainActivityPresenter bindMainActivityPresenter(MainActivityPresenterImp presenter);
 
-  public ActivityModule(final MainActivityView view) {
-    this.view = view;
-  }
-
-  @PerActivity @Provides MainActivityPresenter providePresenter(StateToDoAdapter todoAdapter, ToDoStorage storage) {
-    return new MainActivityPresenterImp(this.view, todoAdapter, storage);
-  }
-
-  @Provides public StateToDoAdapter provideStateAdapter() {
-    return new StateToDoAdapter(view.provideFragmentManager(),
-        Arrays.asList(
-            new Pair<>(DisplayOptions.ALL, "ALL"),
-            new Pair<>(DisplayOptions.ACTIVE, "ACTIVE"),
-            new Pair<>(DisplayOptions.INACTIVE, "INACTIVE")));
-  }
+  @ForFragment @ContributesAndroidInjector(modules = { FragmentModule.class, ProviderFragmentModule.class })
+  public abstract TaskListFragment bindTaskListFragment();
 }

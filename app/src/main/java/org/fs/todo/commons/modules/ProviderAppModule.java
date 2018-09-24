@@ -15,17 +15,25 @@
  */
 package org.fs.todo.commons.modules;
 
-import dagger.Binds;
+import android.arch.persistence.room.Room;
+import android.content.Context;
 import dagger.Module;
-import org.fs.common.scope.ForFragment;
-import org.fs.todo.presenters.TaskListFragmentPresenter;
-import org.fs.todo.presenters.TaskListFragmentPresenterImp;
-import org.fs.todo.views.TaskListFragment;
-import org.fs.todo.views.TaskListFragmentView;
+import dagger.Provides;
+import javax.inject.Singleton;
+import org.fs.todo.entities.db.LocalStorage;
+import org.fs.todo.entities.db.TaskDao;
 
 @Module
-public abstract class FragmentModule {
+public class ProviderAppModule {
 
-  @Binds @ForFragment public abstract TaskListFragmentView bindTaskListFragmentView(TaskListFragment fragment);
-  @Binds @ForFragment public abstract TaskListFragmentPresenter bindTaskListFragmentPresenter(TaskListFragmentPresenterImp presenter);
+  private final static String DB_NAME = "local_storage.db";
+
+  @Provides @Singleton public LocalStorage provideLocalStorage(Context context) {
+    return Room.databaseBuilder(context, LocalStorage.class, DB_NAME)
+      .build();
+  }
+
+  @Provides @Singleton public TaskDao provideTaskDao(LocalStorage localStorage) {
+    return localStorage.taskDao();
+  }
 }

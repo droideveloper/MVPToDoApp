@@ -15,23 +15,13 @@
  */
 package org.fs.todo;
 
-import android.app.Application;
-import org.fs.todo.commons.components.AppComponent;
+import dagger.android.AndroidInjector;
+import dagger.android.support.DaggerApplication;
 import org.fs.todo.commons.components.DaggerAppComponent;
-import org.fs.todo.commons.modules.AppModule;
 
-public class ToDoApplication extends Application {
+public class ToDoApplication extends DaggerApplication {
 
-  private AppComponent appComponent;
-
-  @Override public void onCreate() {
-    super.onCreate();
-    appComponent = DaggerAppComponent.builder()
-        .appModule(new AppModule(this))
-        .build();
-  }
-
-  public AppComponent provideAppComponent() {
-    return this.appComponent;
+  @Override protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
+    return DaggerAppComponent.builder().create(this);
   }
 }

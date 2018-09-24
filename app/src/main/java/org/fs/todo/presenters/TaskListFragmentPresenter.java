@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.commons.scopes;
+package org.fs.todo.presenters;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import javax.inject.Scope;
+import org.fs.common.PresenterType;
 
-@Scope
-@Retention(RetentionPolicy.RUNTIME)
-public @interface PerActivity { }
+public interface TaskListFragmentPresenter extends PresenterType { }

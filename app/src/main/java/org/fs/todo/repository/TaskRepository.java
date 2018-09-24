@@ -1,6 +1,6 @@
 /*
- * To-Do Copyright (C) 2017 Fatih.
- *  
+ * MVP Android Copyright (C) 2018 Fatih.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.entities.events;
+package org.fs.todo.repository;
 
-import org.fs.common.EventType;
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import java.util.List;
+import org.fs.todo.entities.Task;
 
-public final class AddTaskEventType implements EventType {
-  private final String text;
+public interface TaskRepository {
 
-  public AddTaskEventType(final String text) {
-    this.text = text;
-  }
-
-  public final String text() {
-    return text;
-  }
+  Flowable<List<Task>> queryAll();
+  Maybe<Task> queryByTaskId(long taskId);
+  Flowable<List<Task>> queryByTaskState(int state);
+  Completable insert(Task task);
+  Completable update(Task task);
+  Completable delete(Task task);
 }

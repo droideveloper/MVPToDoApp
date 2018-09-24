@@ -2,4 +2,8 @@
   <string name="app_name">To-Do</string>
   <string name="close_sign">x</string>
   <string name="toolbar_hint">What needs to be done?</string>
+
+  <string name="str_all_title">ALL</string>
+  <string name="str_active_title">ACTIVE</string>
+  <string name="str_inactive_title">INACTIVE</string>
 </resources>

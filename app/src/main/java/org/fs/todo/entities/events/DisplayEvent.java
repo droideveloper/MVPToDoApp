@@ -13,19 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.commons;
+package org.fs.todo.entities.events;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.functions.Function;
-import java.util.List;
+import org.fs.common.EventType;
+import org.fs.todo.entities.Option;
 import org.fs.todo.entities.Task;
 
-public interface ToDoStorage {
+public final class DisplayEvent implements EventType {
 
-  Observable<List<Task>> all();
-  Single<Task> find(Function<Task, Boolean> filter);
-  Observable<Boolean> create(Task task);
-  Observable<Boolean> update(Task task);
-  Observable<Boolean> delete(Task task);
+  private final Task task;
+  private final Option option;
+
+  public DisplayEvent(final Task task, final Option option) {
+    this.task = task;
+    this.option = option;
+  }
+
+  public final Task task() {
+    return task;
+  }
+
+  public final Option option() {
+    return option;
+  }
 }

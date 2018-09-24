@@ -1,6 +1,6 @@
 /*
- * To-Do Copyright (C) 2017 Fatih.
- *  
+ * To-Do Copyright (C) 2018 Fatih.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.entities.events;
+package org.fs.todo.commons.modules;
 
-import org.fs.common.EventType;
+import dagger.Module;
+import dagger.Provides;
+import org.fs.common.scope.ForFragment;
 import org.fs.todo.entities.Task;
+import org.fs.util.ObservableList;
 
-public final class ChangeTaskEventType implements EventType {
+@Module
+public class ProviderFragmentModule {
 
-  private final Task task;
-
-  public ChangeTaskEventType(final Task task) {
-    this.task = task;
-  }
-
-  public final Task task() {
-    return this.task;
+  @Provides @ForFragment public ObservableList<Task> provideTaskDataSet() {
+    return new ObservableList<>();
   }
 }

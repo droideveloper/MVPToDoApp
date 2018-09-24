@@ -1,6 +1,6 @@
 /*
- * To-Do Copyright (C) 2017 Fatih.
- *  
+ * To-Do Copyright (C) 2018 Fatih.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,26 +15,25 @@
  */
 package org.fs.todo.commons.modules;
 
+import android.app.Application;
 import android.content.Context;
+import dagger.Binds;
 import dagger.Module;
-import dagger.Provides;
+import dagger.android.ContributesAndroidInjector;
 import javax.inject.Singleton;
-import org.fs.todo.commons.ToDoStorage;
-import org.fs.todo.commons.ToDoStorageImp;
+import org.fs.common.scope.ForActivity;
+import org.fs.todo.ToDoApplication;
+import org.fs.todo.repository.TaskRepository;
+import org.fs.todo.repository.TaskRepositoryImp;
+import org.fs.todo.views.MainActivity;
 
-@Module public class AppModule {
+@Module
+public abstract class AppModule {
 
-  private final Context context;
+  @Binds @Singleton public abstract Application bindApplication(ToDoApplication app);
+  @Binds @Singleton public abstract Context bindContext(Application app);
+  @Binds @Singleton public abstract TaskRepository bindTaskRepository(TaskRepositoryImp repo);
 
-  public AppModule(final Context context) {
-    this.context = context;
-  }
-
-  @Singleton @Provides Context provideContext() {
-    return this.context;
-  }
-
-  @Singleton @Provides ToDoStorage provideStorage() {
-   return new ToDoStorageImp(context);
-  }
+  @ForActivity @ContributesAndroidInjector(modules = { ActivityModule.class, ProviderActivityModule.class })
+  public abstract MainActivity bindMainActivity();
 }

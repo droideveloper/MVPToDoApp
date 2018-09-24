@@ -17,7 +17,7 @@ package org.fs.todo.entities;
 
 public final class DisplayOptions {
 
-  public final static int ALL       = 0x01;
-  public final static int ACTIVE    = 0x02;
-  public final static int INACTIVE  = 0x03;
+  public final static int ALL = 0x01;
+  public final static int ACTIVE = 0x02;
+  public final static int INACTIVE = 0x03;
 }

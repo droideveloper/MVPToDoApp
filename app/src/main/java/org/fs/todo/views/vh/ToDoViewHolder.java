@@ -19,36 +19,44 @@ import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import org.fs.common.BusManager;
 import org.fs.core.AbstractRecyclerViewHolder;
 import org.fs.todo.BuildConfig;
 import org.fs.todo.R;
 import org.fs.todo.entities.Task;
 import org.fs.todo.entities.TaskState;
-import org.fs.todo.entities.events.ChangeTaskEventType;
-import org.fs.todo.entities.events.RemoveTaskEventType;
+import org.fs.todo.entities.events.ChangeTaskEvent;
+import org.fs.todo.entities.events.RemoveTaskEvent;
 
-import static org.fs.util.ViewUtility.findViewById;
+import static org.fs.todo.entities.DisplayOptions.*;
 
 public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
 
-  private TextView text;
-  private View close;
-  private RadioButton checkbox;
+  @BindView(R.id.viewTextTitle) TextView viewTextTile;
+  @BindView(R.id.viewClose) View viewClose;
+  @BindView(R.id.viewCheckBox) RadioButton viewCheckBox;
 
-  private int strikeColor  = Color.parseColor("#D9D9D9");
+  private int strikeColor = Color.parseColor("#D9D9D9");
   private int defaultColor = Color.parseColor("#4D4D4D");
 
-  private Task data;
+  public ToDoViewHolder(ViewGroup parent) {
+    super(LayoutInflater.from(parent.getContext())
+       .inflate(R.layout.view_task_item, parent, false));
+  }
+
+  private Unbinder unbinder;
 
   public ToDoViewHolder(View view) {
     super(view);
-    text = findViewById(view, R.id.text);
-    close = findViewById(view, R.id.close);
-    checkbox = findViewById(view, R.id.checkbox);
+    unbinder = ButterKnife.bind(view);
   }
 
   @Override protected String getClassTag() {
@@ -60,26 +68,20 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
   }
 
   @Override public void unbind() {
-    /*
-     * no opt
-     */
+    if (unbinder != null) {
+      unbinder.unbind();
+    }
   }
 
-  @Override public final void bind(Task data) {
-    this.data = data;
-    switch (data.getState()) {
+  @Override public final void bind(Task entity) {
+    this.entity = entity;
+    switch (entity.getTaskState()) {
       case ACTIVE: {
-        text.setText(data.getText());
-        text.setTextColor(defaultColor);
-        checkbox.setChecked(false);
+        bindActiveState(entity);
         break;
       }
       case INACTIVE: {
-        SpannableString str = new SpannableString(data.getText());
-        str.setSpan(new StrikethroughSpan(), 0, data.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        text.setText(str);
-        text.setTextColor(strikeColor);
-        checkbox.setChecked(true); // check if this state only send by change
+        bindInactiveState(entity);
         break;
       }
       case COMPLETED:
@@ -87,12 +89,24 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
         break;
       }
     }
-    checkbox.setOnClickListener(v -> {
-      TaskState state = this.data.getState() == TaskState.INACTIVE ? TaskState.ACTIVE : TaskState.INACTIVE;
-      BusManager.send(new ChangeTaskEventType(this.data.newBuilder().state(state).build()));
+    viewCheckBox.setOnClickListener(v -> {
+      TaskState state = this.entity.getTaskState() == TaskState.INACTIVE ? TaskState.ACTIVE : TaskState.INACTIVE;
+      BusManager.send(new ChangeTaskEvent(this.entity.newBuilder().state(state).build()));
     });
-    close.setOnClickListener((v) -> BusManager.send(new RemoveTaskEventType(data)));
+    viewClose.setOnClickListener((v) -> BusManager.send(new RemoveTaskEvent(entity)));
   }
 
+  private void bindActiveState(Task task) {
+    viewTextTile.setText(task.getText());
+    viewTextTile.setTextColor(defaultColor);
+    viewCheckBox.setChecked(false);
+  }
 
+  private void bindInactiveState(Task task) {
+    SpannableString str = new SpannableString(task.getText());
+    str.setSpan(new StrikethroughSpan(), 0, task.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    viewTextTile.setText(str);
+    viewTextTile.setTextColor(strikeColor);
+    viewCheckBox.setChecked(true); // check if this state only send by change
+  }
 }

@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.todo.commons.components;
+package org.fs.todo.entities.events;
 
-import dagger.Component;
-import org.fs.todo.commons.modules.FragmentModule;
-import org.fs.todo.commons.scopes.PerFragment;
-import org.fs.todo.views.TaskStateFragment;
+import org.fs.common.EventType;
+import org.fs.todo.entities.Task;
 
-@PerFragment
-@Component(modules = FragmentModule.class, dependencies = AppComponent.class)
-public interface FragmentComponent {
-  void inject(TaskStateFragment fragment);
+public final class ChangeTaskEvent implements EventType {
+
+  private final Task task;
+
+  public ChangeTaskEvent(final Task task) {
+    this.task = task;
+  }
+
+  public final Task task() {
+    return this.task;
+  }
 }
