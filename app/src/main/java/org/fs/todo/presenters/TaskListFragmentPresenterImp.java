@@ -192,7 +192,6 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
         dataSet.remove(index);
       }
     }
-    log(Log.ERROR, String.format(Locale.US, "collection size for displayType %d with amount of %d", displayOption, dataSet.size()));
   }
 
   private void changeForInactiveDisplayOptions(Task task, int index) {
@@ -205,14 +204,12 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
         dataSet.add(task);
       }
     }
-    log(Log.ERROR, String.format(Locale.US, "collection size for displayType %d with amount of %d", displayOption, dataSet.size()));
   }
 
   private void changeForAllDisplayOptions(Task task, int index) {
     if (index != -1) {
       dataSet.set(index, task);
     }
-    log(Log.ERROR, String.format(Locale.US, "collection size for displayType %d with amount of %d", displayOption, dataSet.size()));
   }
 
   @Override public SwipeRefreshLayout.OnRefreshListener provideRefreshListener() {
