@@ -20,7 +20,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import javax.inject.Inject;
 import org.fs.core.AbstractActivity;
@@ -31,6 +30,8 @@ import org.fs.todo.views.adapters.StateToDoAdapter;
 
 public class MainActivity extends AbstractActivity<MainActivityPresenter>
     implements MainActivityView {
+
+  private final static int OFFSET_LIMIT = 3;
 
   @Inject StateToDoAdapter stateToDoAdapter;
 
@@ -53,6 +54,7 @@ public class MainActivity extends AbstractActivity<MainActivityPresenter>
   @Override public void setUp() {
     viewEditText.addTextChangedListener(presenter.provideTextWatcher());
     viewEditText.setOnEditorActionListener(presenter.provideEditorActionListener());
+    viewPager.setOffscreenPageLimit(OFFSET_LIMIT);
     viewPager.setAdapter(stateToDoAdapter);
   }
 

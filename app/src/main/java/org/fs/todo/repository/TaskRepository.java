@@ -16,16 +16,15 @@
 package org.fs.todo.repository;
 
 import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import java.util.List;
 import org.fs.todo.entities.Task;
 
 public interface TaskRepository {
 
-  Flowable<List<Task>> queryAll();
-  Maybe<Task> queryByTaskId(long taskId);
-  Flowable<List<Task>> queryByTaskState(int state);
+  Single<List<Task>> queryAll();
+  Single<Task> queryByTaskId(long taskId);
+  Single<List<Task>> queryByTaskState(int state);
   Completable insert(Task task);
   Completable update(Task task);
   Completable delete(Task task);

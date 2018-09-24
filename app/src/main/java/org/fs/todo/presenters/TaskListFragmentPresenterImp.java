@@ -153,19 +153,11 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
     final int state = taskStateForDisplayOption();
     final Disposable loadDataDisposable = (state == -1 ? taskRepository.queryAll() : taskRepository.queryByTaskState(state))
       .delay(FETCH_DELAY, TimeUnit.MILLISECONDS)
-      .compose(RxUtility.toAsyncFlowable(view))
+      .compose(RxUtility.toAsyncSingle(view))
       .subscribe(data -> {
         if (view.isAvailable()) {
           if (!Collections.isNullOrEmpty(data)) {
-            Task task;
-            int index;
-            for (int i = 0, z = data.size(); i < z; i++) {
-              task = data.get(i);
-              index = dataSet.indexOf(task::equals);
-              if (index == -1) {
-                dataSet.add(task);
-              }
-            }
+            dataSet.addAll(data);
           }
         }
       }, error -> {

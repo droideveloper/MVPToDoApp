@@ -18,6 +18,7 @@ package org.fs.todo.repository;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -33,15 +34,15 @@ public class TaskRepositoryImp implements TaskRepository {
     this.taskDao = taskDao;
   }
 
-  @Override public Flowable<List<Task>> queryAll() {
+  @Override public Single<List<Task>> queryAll() {
     return taskDao.queryAll();
   }
 
-  @Override public Maybe<Task> queryByTaskId(long taskId) {
+  @Override public Single<Task> queryByTaskId(long taskId) {
     return taskDao.queryByTaskId(taskId);
   }
 
-  @Override public Flowable<List<Task>> queryByTaskState(int state) {
+  @Override public Single<List<Task>> queryByTaskState(int state) {
     return taskDao.queryByTaskState(state);
   }
 

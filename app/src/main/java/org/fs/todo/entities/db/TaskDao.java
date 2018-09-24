@@ -21,16 +21,15 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
-import io.reactivex.Flowable;
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 import java.util.List;
 import org.fs.todo.entities.Task;
 
 @Dao
 public interface TaskDao {
-  @Query("SELECT * FROM tasks") Flowable<List<Task>> queryAll();
-  @Query("SELECT * FROM tasks WHERE taskId = :taskId") Maybe<Task> queryByTaskId(long taskId);
-  @Query("SELECT * FROM tasks WHERE state = :state") Flowable<List<Task>> queryByTaskState(int state);
+  @Query("SELECT * FROM tasks") Single<List<Task>> queryAll();
+  @Query("SELECT * FROM tasks WHERE taskId = :taskId") Single<Task> queryByTaskId(long taskId);
+  @Query("SELECT * FROM tasks WHERE state = :state") Single<List<Task>> queryByTaskState(int state);
   @Insert(onConflict = OnConflictStrategy.REPLACE) void insert(Task task);
   @Update(onConflict = OnConflictStrategy.REPLACE) void update(Task task);
   @Delete void delete(Task task);
