@@ -49,7 +49,6 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
   private int displayOption;
 
   private final CompositeDisposable disposeBag = new CompositeDisposable();
-  private Disposable loadDataDisposable;
 
   @Inject TaskListFragmentPresenterImp(TaskListFragmentView view, ObservableList<Task> dataSet, TaskRepository taskRepository) {
     super(view);
@@ -150,22 +149,26 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
       dataSet.clear(); // initial state clear
     }
     final int state = taskStateForDisplayOption();
-    loadDataDisposable = (state == -1 ? taskRepository.queryAll() : taskRepository.queryByTaskState(state))
+    final Disposable loadDataDisposable = (state == -1 ? taskRepository.queryAll() : taskRepository.queryByTaskState(state))
       .compose(RxUtility.toAsyncFlowable(view))
       .subscribe(data -> {
         if (view.isAvailable()) {
           if (!Collections.isNullOrEmpty(data)) {
-            dataSet.addAll(data);
+            final boolean alreadyAdded = dataSet.containsAll(data);
+            if (!alreadyAdded) {
+              dataSet.addAll(data);
+            }
           }
         }
-        loadDataDisposable.dispose(); // if you do not clear data set you will be fucked
       }, error -> {
         if (view.isAvailable()) {
           view.showError(error.getLocalizedMessage());
         }
         log(error); // log error
-        loadDataDisposable.dispose(); // if you do not clear data set you will be fucked, since their change impl calls here all the time we need to focus on something new
       });
+
+    // add bag
+    disposeBag.add(loadDataDisposable);
   }
 
   private int taskStateForDisplayOption() {
