@@ -44,7 +44,7 @@ public class TaskListFragment extends AbstractFragment<TaskListFragmentPresenter
 
   public static TaskListFragment newInstance(final int displayOption) {
     Bundle args = new Bundle();
-    args.putInt(TaskListFragmentPresenterImp.KEY_OPTIONS, displayOption);
+    args.putInt(TaskListFragmentPresenterImp.BUNDLE_ARGS_DISPLAY_OPTION, displayOption);
 
     TaskListFragment fragment = new TaskListFragment();
     fragment.setArguments(args);

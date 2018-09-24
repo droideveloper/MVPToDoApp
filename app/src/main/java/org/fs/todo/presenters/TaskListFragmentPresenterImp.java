@@ -42,8 +42,8 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
     implements TaskListFragmentPresenter {
 
   private final static long FETCH_DELAY = 1000L;
-  private final static String KEY_DATA_SET = "key.task.array";
-  public final static String KEY_OPTIONS  = "key.display.option";
+  private final static String BUNDLE_ARGS_DATA_SET = "bundle.args.data.set";
+  public final static String BUNDLE_ARGS_DISPLAY_OPTION = "bundle.args.display.option";
 
   private final TaskRepository taskRepository;
   private final ObservableList<Task> dataSet;
@@ -67,21 +67,21 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
   @Override public void restoreState(Bundle restoreState) {
     if(restoreState != null) {
       // this was the reason why we do not have new context in position.
-      if(restoreState.containsKey(KEY_DATA_SET)) {
-        final List<Task> tasks = restoreState.getParcelableArrayList(KEY_DATA_SET);
+      if(restoreState.containsKey(BUNDLE_ARGS_DATA_SET)) {
+        final List<Task> tasks = restoreState.getParcelableArrayList(BUNDLE_ARGS_DATA_SET);
         if (!Collections.isNullOrEmpty(tasks)) {
           dataSet.addAll(tasks);
         }
       }
-      displayOption = restoreState.getInt(KEY_OPTIONS, DisplayOptions.ALL);
+      displayOption = restoreState.getInt(BUNDLE_ARGS_DISPLAY_OPTION, DisplayOptions.ALL);
     }
   }
 
   @Override public void storeState(Bundle storeState) {
     if(!Collections.isNullOrEmpty(dataSet)) {
-      storeState.putParcelableArrayList(KEY_DATA_SET, dataSet);
+      storeState.putParcelableArrayList(BUNDLE_ARGS_DATA_SET, dataSet);
     }
-    storeState.putInt(KEY_OPTIONS, displayOption);
+    storeState.putInt(BUNDLE_ARGS_DISPLAY_OPTION, displayOption);
   }
 
   @Override public void onStart() {
