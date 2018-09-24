@@ -20,6 +20,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import org.fs.common.AbstractPresenter;
 import org.fs.common.BusManager;
@@ -40,6 +41,7 @@ import org.fs.util.RxUtility;
 public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFragmentView>
     implements TaskListFragmentPresenter {
 
+  private final static long FETCH_DELAY = 1000L;
   private final static String KEY_DATA_SET = "key.task.array";
   public final static String KEY_OPTIONS  = "key.display.option";
 
@@ -150,13 +152,19 @@ public class TaskListFragmentPresenterImp extends AbstractPresenter<TaskListFrag
     }
     final int state = taskStateForDisplayOption();
     final Disposable loadDataDisposable = (state == -1 ? taskRepository.queryAll() : taskRepository.queryByTaskState(state))
+      .delay(FETCH_DELAY, TimeUnit.MILLISECONDS)
       .compose(RxUtility.toAsyncFlowable(view))
       .subscribe(data -> {
         if (view.isAvailable()) {
           if (!Collections.isNullOrEmpty(data)) {
-            final boolean alreadyAdded = dataSet.containsAll(data);
-            if (!alreadyAdded) {
-              dataSet.addAll(data);
+            Task task;
+            int index;
+            for (int i = 0, z = data.size(); i < z; i++) {
+              task = data.get(i);
+              index = dataSet.indexOf(task::equals);
+              if (index == -1) {
+                dataSet.add(task);
+              }
             }
           }
         }

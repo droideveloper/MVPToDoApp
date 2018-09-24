@@ -19,6 +19,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
+import android.text.TextUtils;
 import java.util.Date;
 import org.fs.core.AbstractEntity;
 import org.fs.todo.BuildConfig;
@@ -119,9 +120,11 @@ public final class Task extends AbstractEntity {
     if (obj == null) return false;
     if (obj instanceof Task) {
       Task t = (Task) obj;
-      final Long lhs = t.getTaskId() == null ? Long.MIN_VALUE: t.getTaskId();
-      final Long rhs = getTaskId() == null ? Long.MAX_VALUE: getTaskId();
-      return lhs.equals(rhs);
+      if (t.getTaskId() != null && getTaskId() != null) {
+        return t.getTaskId().equals(getTaskId());
+      } else if (t.getText() != null && getText() != null) {
+        return TextUtils.equals(t.getText(), getText());
+      }
     }
     return false;
   }
