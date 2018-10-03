@@ -54,4 +54,5 @@ dependencies {
 
   implementation "android.arch.persistence.room:rxjava2:$DATABASE_VERSION"
   implementation "android.arch.persistence.room:runtime:$DATABASE_VERSION"
-  annotationProcessor "android.arch.persistence.room:compiler:$DATABASE_VERSION"}
+  annotationProcessor "android.arch.persistence.room:compiler:$DATABASE_VERSION"
+}
