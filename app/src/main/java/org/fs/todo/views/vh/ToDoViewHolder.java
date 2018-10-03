@@ -47,7 +47,6 @@ public class ToDoViewHolder extends AbstractRecyclerViewHolder<Task> {
        .inflate(R.layout.view_task_item, parent, false));
   }
 
-
   private ToDoViewHolder(View view) {
     super(view);
     viewTextTile = view.findViewById(R.id.viewTextTitle);
